@@ -1,0 +1,501 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="light dark"><meta name="robots" content="noindex,nofollow"><meta http-equiv="Cache-Control" content="no-cache"><title>SAV Bowman – maintenances</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
+<style>
+:root{--bg:#eef1f0;--sf:#fff;--tx:#14201f;--mu:#617370;--ln:#d8dfdd;--ac:#0b6e6e;--as:#dff0ee;--r:#c0392b;--p:#c77700;--v:#6b4fbb;--n:#6b7a78;--o:#2e7d4f}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1514;--sf:#172120;--tx:#e6eeec;--mu:#8fa39f;--ln:#27403d;--ac:#3fb5ad;--as:#14312f;--r:#ef6b5b;--p:#e0a030;--v:#a58cf0;--n:#8fa39f;--o:#52b97d}}
+:root[data-theme="dark"]{--bg:#0f1514;--sf:#172120;--tx:#e6eeec;--mu:#8fa39f;--ln:#27403d;--ac:#3fb5ad;--as:#14312f;--r:#ef6b5b;--p:#e0a030;--v:#a58cf0;--n:#8fa39f;--o:#52b97d}
+:root{box-sizing:border-box}
+*{box-sizing:inherit}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;padding-bottom:env(safe-area-inset-bottom,0px)}
+a{color:var(--ac)}
+button,input,select,textarea{font:inherit;color:inherit;background:var(--sf);border:1px solid var(--ln);border-radius:8px;padding:9px 12px;min-height:40px}
+button{cursor:pointer}button:hover{border-color:var(--ac)}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.row:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+input[type=checkbox]{min-height:0;width:18px;height:18px;padding:0}
+.pr{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:600}.dg{color:var(--r)}
+header{position:sticky;top:0;z-index:500;background:var(--sf);border-bottom:1px solid var(--ln);padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+h1{font-size:18px;margin:0 8px 0 0;letter-spacing:-.01em}#q{flex:1;min-width:150px}
+.tabs{display:flex;overflow-x:auto;max-width:100%}.tabs button{border-radius:0;border-width:0 0 3px;background:none;padding:6px 10px;white-space:nowrap}.tabs button.on{border-color:var(--ac);font-weight:700}
+.bd{border-radius:99px;font-weight:700;border-color:var(--c);color:var(--c)}.bd.z{display:none}
+#bn{display:none;margin:10px 14px 0;padding:10px 14px;border-radius:10px;background:var(--as);border:1px solid var(--ac);align-items:center;gap:10px;flex-wrap:wrap}#bn.s{display:flex}#bn span{flex:1;min-width:200px}
+.kp{display:flex;gap:8px;padding:12px 14px 0;overflow-x:auto}.kp button{flex:none;min-width:104px;text-align:left;border-radius:10px;border-left:4px solid var(--c);padding:6px 12px}
+.kp b{display:block;font-size:22px;line-height:1.1}.kp span{font-size:12px;color:var(--mu)}.kp .on{background:var(--as);border-color:var(--c)}
+main{display:grid;grid-template-columns:minmax(300px,400px) 1fr;gap:12px;padding:12px 14px}
+#list,#det{background:var(--sf);border:1px solid var(--ln);border-radius:12px;max-height:calc(100vh - 190px);overflow:auto}#det{padding:18px}
+body.w main{grid-template-columns:1fr}body.w #list{display:none}body.w #det{max-height:none;overflow:visible}
+.row{display:flex;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--ln);cursor:pointer}.row:hover,.row.on{background:var(--as)}
+.row .m{flex:1;min-width:0}.row b,.row small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}small,.mu{color:var(--mu);font-size:13px}
+.pill{font-size:12px;font-weight:600;white-space:nowrap;color:var(--c)}.pill:before{content:"●";margin-right:4px}
+.r{--c:var(--r)}.p{--c:var(--p)}.v{--c:var(--v)}.n{--c:var(--n)}.o{--c:var(--o)}.x{--c:var(--mu)}
+.dh{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;align-items:flex-start}.dh h2{margin:0 0 4px;font-size:22px}
+.mc{border:1px solid var(--ln);border-left:4px solid var(--c);border-radius:10px;padding:12px;margin:10px 0}
+.mc h4{margin:0 0 2px;font-size:16px}.g{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.g button,.g a button{padding:6px 10px;min-height:34px;font-size:14px}.g a{text-decoration:none}
+.warn{color:var(--p);font-size:13px;font-weight:600}.back{display:none;margin-bottom:10px}.emp{padding:28px;text-align:center;color:var(--mu)}
+dialog{border:1px solid var(--ln);border-radius:14px;background:var(--sf);color:var(--tx);width:min(480px,94vw);max-height:92vh;padding:18px}dialog.W{width:min(680px,96vw)}dialog::backdrop{background:#0008}
+dialog label{display:block;margin:10px 0 0;font-size:13px;color:var(--mu)}dialog input,dialog select,dialog textarea{width:100%;margin-top:3px;color:var(--tx)}
+dialog details{margin-top:12px;border:1px solid var(--ln);border-radius:10px;padding:8px 12px}dialog summary{cursor:pointer;font-weight:600;padding:4px 0}
+.bt{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}h3{margin:0 0 4px}
+#ts{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:99px;display:none;z-index:2000;max-width:92vw}
+.tb{display:flex;gap:8px;padding:10px 14px 0;flex-wrap:wrap}.tb select{flex:1;min-width:120px;max-width:240px}
+.gh{padding:8px 12px;background:var(--bg);font-weight:700;position:sticky;top:0}
+.gr{display:grid;grid-template-columns:110px 1fr 40px;align-items:center;gap:8px;margin:4px 0}.gr i{display:block;height:10px;border-radius:5px;background:var(--ac)}.gr b{text-align:right}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}.card{border:1px solid var(--ln);border-radius:12px;padding:12px}.card .row{padding:8px 4px}
+.tw{overflow-x:auto;border:1px solid var(--ln);border-radius:10px}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:8px 10px;border-bottom:1px solid var(--ln);text-align:left;white-space:nowrap}th{background:var(--bg);cursor:pointer;position:sticky;top:0;user-select:none}tbody tr:hover{background:var(--as)}td.c{cursor:pointer;font-weight:600}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.cal .dn{text-align:center;font-size:12px;color:var(--mu);font-weight:600}
+.cd{min-height:96px;border:1px solid var(--ln);border-radius:8px;padding:4px;cursor:pointer;overflow:hidden}.cd:hover{border-color:var(--ac)}.cd.t{border:2px solid var(--ac)}.cd.o2{opacity:.45}.cd.e{cursor:default}
+.cd .n2{font-size:12px;color:var(--mu);display:block;text-align:right}
+.ch{display:block;width:100%;text-align:left;font-size:11px;line-height:1.2;padding:2px 5px;min-height:0;margin-top:2px;border-radius:5px;border:1px solid var(--c);color:var(--c);background:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ch.pl{background:var(--c);color:#fff}
+.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.nav h2{margin:0;flex:1;font-size:20px;min-width:150px}
+.map{height:68vh;min-height:360px;border-radius:12px;border:1px solid var(--ln);z-index:0}.map.s{height:56vh}
+.mk{display:block;width:18px;height:18px;border-radius:50%;background:var(--c);border:3px solid #fff;box-shadow:0 1px 4px #0007}
+.nb{display:flex;width:26px;height:26px;border-radius:50%;background:var(--ac);color:#fff;border:2px solid #fff;font-weight:700;font-size:13px;align-items:center;justify-content:center;box-shadow:0 1px 4px #0007}
+.tr{display:grid;grid-template-columns:minmax(300px,430px) 1fr;gap:14px}
+.st2{display:flex;gap:8px;align-items:center;padding:8px 4px;border-bottom:1px solid var(--ln)}.st2 .m{flex:1;min-width:0}.st2 b{display:block}.st2 button{padding:2px 8px;min-height:32px}
+.num{flex:none;width:26px;height:26px;border-radius:50%;background:var(--ac);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:13px}
+.fl{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin:8px 0}.fl label{font-size:12px;color:var(--mu);display:block}.fl input,.fl select{display:block;margin-top:2px}
+.leaflet-popup-content button{margin:3px 3px 0 0;padding:4px 8px;min-height:30px;font-size:13px;color:#14201f;background:#fff}
+@media print{header,.kp,.tb,#list,.g,.back,#ts,#bn,.nav button,.fl,.map{display:none!important}main{display:block;padding:0}#det{display:block!important;border:0;max-height:none}body{background:#fff;color:#000}.tw{overflow:visible}}
+@media(max-width:820px){main{grid-template-columns:1fr}#list,#det{max-height:none}body:not(.d):not(.w) #det{display:none}body.d:not(.w) #list{display:none}.back{display:inline-block}.tr{grid-template-columns:1fr}.cd{min-height:64px}.cd .ch{font-size:10px}header{gap:6px}}
+#gate{position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;background:var(--bg);padding:20px}
+body.lock.ask #gate{display:flex}body.lock>*:not(#gate):not(script){display:none!important}
+#gate form{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:26px;width:min(360px,100%);display:flex;flex-direction:column;gap:12px}
+#gate h2{margin:0;font-size:22px}#gate input[type=password]{width:100%;font-size:17px}#gate label{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--mu)}#gate .warn{min-height:18px}
+#cs{font-size:13px;white-space:nowrap}h1{user-select:none;-webkit-user-select:none;cursor:default}body.adm #ttl:after{content:" ⚙";color:var(--p)}#cs.dg{border-color:var(--r)}
+.lg{display:inline-flex;align-items:center;cursor:default;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;color:var(--tx)}.lg svg{height:30px;width:auto}.lg img{height:30px}#ttl{display:flex;align-items:center;gap:8px}#gate .lg{align-self:center}#gate .lg svg,#gate .lg img{height:46px}
+.sgl{position:absolute;left:0;right:0;top:100%;z-index:10;background:var(--sf);border:1px solid var(--ln);border-radius:8px;max-height:220px;overflow:auto;box-shadow:0 6px 18px #0003}.sgl div{padding:8px 10px;cursor:pointer;border-bottom:1px solid var(--ln);color:var(--tx)}.sgl div:hover{background:var(--as)}
+#vb{position:fixed;left:0;right:0;top:0;z-index:4000;background:var(--ac);color:#fff;padding:8px 14px;display:none;gap:10px;align-items:center;justify-content:center}#vb button{min-height:30px;padding:2px 10px;color:#14201f}
+</style></head><body class="lock">
+<div id="gate"><form id="gf2" autocomplete="off"><span class="lg lgh" id="glg"></span><h2 id="gh" style="text-align:center;margin:0">SAV Bowman</h2><span class="mu" id="gm" style="text-align:center">Accès protégé</span><input id="gp" type="password" placeholder="Mot de passe" autocomplete="current-password" aria-label="Mot de passe"><label><input type="checkbox" id="gr"> Rester connecté sur cet appareil</label><div id="ge" class="warn" role="alert"></div><button class="pr" type="submit">Entrer</button></form></div>
+<div id="vb"><span>Nouvelle version disponible.</span><button data-a="reload">Mettre à jour</button></div>
+<header><h1 id="ttl"><span class="lg lgh"></span><span id="ttx">SAV</span></h1><input id="q" type="search" placeholder="Chercher : client, ville, modèle, n° de série, note…" aria-label="Recherche"><button class="bd r" id="bdg" data-a="late"></button>
+<div class="tabs"><button data-a="mode" data-v="a">Accueil</button><button data-a="mode" data-v="c">Clients</button><button data-a="mode" data-v="t">À traiter</button><button data-a="mode" data-v="p">Planning</button><button data-a="mode" data-v="k">Carte</button><button data-a="mode" data-v="r">Tournée</button><button data-a="mode" data-v="b">Tableau</button></div>
+<button class="pr" data-a="addC">+ Client</button><button data-a="theme" id="th" title="Thème clair / sombre / auto" aria-label="Changer de thème">Thème</button><button id="cs" data-a="cloud" title="Synchronisation avec Google Sheets">☁</button><button data-a="lock" title="Verrouiller le site" aria-label="Verrouiller">🔒</button></header>
+<div id="bn"><span id="bnt"></span><button class="pr" data-a="bkup">Sauvegarder maintenant</button><button data-a="bnx">Plus tard</button></div>
+<div class="kp" id="kp"></div><div class="tb" id="tb"><select id="gf" aria-label="Gamme"></select><select id="vf" aria-label="Ville"></select><select id="so" aria-label="Tri"><option value="u">Tri : urgence</option><option value="n">Tri : nom</option><option value="v">Tri : ville</option></select></div>
+<main><div id="list"></div><div id="det"></div></main>
+<dialog id="dlg"><form id="f"></form></dialog><div id="ts" role="status"></div>
+<script>
+/* ▼▼▼ À COMPLÉTER : collez ici l'adresse « …/exec » donnée par Google après le déploiement (voir GUIDE_INSTALLATION.md) ▼▼▼ */
+const API_URL='https://script.google.com/macros/s/AKfycbzq-hdMZRBYHqPR1X9rxSpQMsO9yQvXWBJkqqDunTmK66nEuRzEqihyZtBleHhGGK7n/exec';
+/* ▲▲▲ */
+const SEED={"c":[],"m":[],"seuil":30,"per":12};
+const $=s=>document.querySelector(s),KEY='sav_bowman_v1',TK='sav_bowman_theme';
+const ORD=['En retard','À prévoir','Date à vérifier','À renseigner','OK'],CL={'En retard':'r','À prévoir':'p','Date à vérifier':'v','À renseigner':'n','OK':'o','Sans machine':'x'};
+const GAM0=['Vanta','Delta','Gold Xpert','BTX','Fischer','Rigaku','À préciser'],TYPES=['Préventive','Curative','Étalonnage','Installation'],CATS=['Devis','Facture','Rapport','Contrat','Autre'];
+const TPL0={s:'Maintenance de vos équipements',b:'Bonjour {contact},\n\nLa maintenance de vos équipements arrive à échéance :\n{machines}\n\nPouvons-nous convenir d’une date d’intervention ?\n\nCordialement'};
+const GV={'Tereos Artenay':'Artenay','Tereos Fère-Champenoise':'Fère-Champenoise','Tereos Origny':'Origny-Sainte-Benoite','Tereos Thumeries':'Thumeries','Framatome Montbard':'Montbard'};
+const guessV=n=>{const m=n.match(/Cr[ée]dit Municipal (?:de |d’|d'|du |des )(.+)$/i);return m?m[1]:GV[n]||''};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const today=()=>{const t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate())};
+const pd=s=>{const[a,b,c]=s.split('-');return new Date(+a,+b-1,+c)},iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const fmt=s=>s?s.split('-').reverse().join('/'):'—';
+const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ\s'’.\-]/g,'');
+function mkC(o){return{n:'',ct:'',t:'',e:'',v:'',no:'',ad:'',cp:'',lat:null,lng:null,lq:'',docs:[],rel:'',...o}}
+function seed(){const d={bk:iso(today()),seuil:SEED.seuil,per:SEED.per,c:SEED.c.map(r=>mkC({n:r[0],ct:r[1],t:r[2],e:r[3],v:r[4],no:r[5]})),m:SEED.m.map((r,i)=>({id:i+1,c:r[0],g:r[1],mo:r[2],rf:r[3],sn:r[4],q:r[5],d:r[6],p:r[7],cf:r[8],no:r[9],dv:r[10]}))};return mig(d)}
+function mig(d){d.seuil=+d.seuil||30;d.per=+d.per||12;d.gammes=d.gammes||[...GAM0];d.tpl=d.tpl||{...TPL0};d.dep=d.dep||{a:'',lat:null,lng:null};d.co=d.co||'Bowman';d.types=d.types||TYPES;d.tour=d.tour||{date:iso(today()),ids:[],back:true,n:6,r:100};
+ d.m.forEach(m=>{m.h=m.h||[];m.ga=m.ga||'';m.pl=m.pl||'';m.ct=m.ct||'';m.d=m.d||'';m.p=m.p??'';m.cf=m.cf||'';if(m.g&&!d.gammes.includes(m.g))d.gammes.push(m.g)});
+ d.c=d.c.map(c=>mkC(c));d.c.forEach(c=>{if(!c.v){const g=guessV(c.n);if(g){c.v=g;c.vg=1}}});
+ d.m.forEach(m=>{if(!d.c.some(c=>c.n===m.c)){const c=mkC({n:m.c});const g=guessV(c.n);if(g){c.v=g;c.vg=1}d.c.push(c)}});
+ if(!d.v3){d.c=d.c.filter(c=>d.m.some(m=>m.c===c.n));d.v3=1}return d}
+function load(){let d;try{const j=localStorage.getItem(KEY);if(j)d=JSON.parse(j)}catch(e){}return mig(d||seed())}
+let DB=load(),U=null,FH=null,FHS='',FLM=0,MAPS=[],TOK=0,bnx=false;
+let S={mode:'a',st:null,sel:null,q:'',g:'',v:'',o:'u',cal:{y:today().getFullYear(),m:today().getMonth()},ts:{k:8,d:1},chk:new Set()};
+const snap=()=>{U=JSON.stringify(DB)};
+/* save() : voir le module « Google Sheets » plus bas */
+function toast(t,u){const e=$('#ts');e.innerHTML=esc(t)+(u&&U?' <button data-a="undo" style="margin-left:8px;min-height:28px;padding:2px 10px">Annuler</button>':'');e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',u?7000:3200)}
+/* ---------- calculs ---------- */
+function info(m){if(!m.d)return{s:'À renseigner'};const d=pd(m.d);if(d>today())return{s:'Date à vérifier'};const n=new Date(d.getFullYear(),d.getMonth(),1);n.setMonth(n.getMonth()+(+m.p||+DB.per));n.setDate(Math.min(d.getDate(),new Date(n.getFullYear(),n.getMonth()+1,0).getDate()));const j=Math.round((n-today())/864e5);return{s:j<0?'En retard':j<=DB.seuil?'À prévoir':'OK',n:iso(n),j}}
+const mach=c=>DB.m.filter(m=>m.c===c),units=l=>l.reduce((a,m)=>a+(+m.q||1),0),cli=n=>DB.c.find(c=>c.n===n);
+function cinfo(c){const l=mach(c.n);if(!l.length)return{s:'Sans machine',j:9e9,l};const x=l.map(info);return{s:ORD.find(o=>x.some(i=>i.s===o)),j:Math.min(...x.map(i=>i.j??9e9)),l}}
+const addr=c=>[c.ad,c.cp,c.v].filter(Boolean).join(' ');
+const hay=(c,ci)=>[c.n,c.ct,c.t,c.e,c.v,c.ad,c.no,ci.s,...ci.l.map(m=>[m.g,m.mo,m.rf,m.sn,m.no].join(' '))].join(' ').toLowerCase();
+const ml=m=>[m.mo,m.rf].filter(Boolean).join(' · ')||m.g;
+const hav=(a,b)=>{const r=x=>x*Math.PI/180,dl=r(b.lat-a.lat),dn=r(b.lng-a.lng),h=Math.sin(dl/2)**2+Math.cos(r(a.lat))*Math.cos(r(b.lat))*Math.sin(dn/2)**2;return 12742*Math.asin(Math.sqrt(h))};
+const dur=s=>{const m=Math.round(s/60);return m<60?m+' min':Math.floor(m/60)+' h '+String(m%60).padStart(2,'0')};
+/* ---------- géolocalisation ---------- */
+async function geo(q){const r=await fetch('https://api-adresse.data.gouv.fr/search/?limit=1&q='+encodeURIComponent(q));const j=await r.json(),f=j.features&&j.features[0];return f&&f.properties.score>.3?{lat:f.geometry.coordinates[1],lng:f.geometry.coordinates[0],lq:f.properties.type}:null}
+async function geoOne(c){const q=addr(c);if(!q)return false;try{const g=await geo(q);if(g){Object.assign(c,g);save();return true}}catch(e){}return false}
+async function geoAll(){const L=DB.c.filter(c=>addr(c)&&c.lat==null);if(!L.length){toast('Tous les clients ayant une adresse ou une ville sont déjà placés');return}let ok=0;for(let i=0;i<L.length;i++){toast('Recherche des positions… '+(i+1)+' / '+L.length);if(await geoOne(L[i]))ok++;await new Promise(r=>setTimeout(r,60))}toast(ok+' client(s) placé(s) sur la carte');render()}
+const depPt=()=>DB.dep.lat!=null?DB.dep:null,depQ=()=>DB.dep.lat!=null?DB.dep.lat+','+DB.dep.lng:DB.dep.a;
+const cq=c=>c.lat!=null?c.lat+','+c.lng:addr(c)||c.n;
+async function setDep(a){DB.dep={a:a.trim(),lat:null,lng:null};if(DB.dep.a){try{const g=await geo(DB.dep.a);if(g){DB.dep.lat=g.lat;DB.dep.lng=g.lng}else toast('Adresse de départ introuvable')}catch(e){toast('Recherche impossible hors connexion')}}save();render()}
+/* ---------- tournée ---------- */
+function order(pts,st,back){const s0=st||pts[0],arr=st?pts.slice():pts.slice(1);let o=[],cur=s0;while(arr.length){let bi=0,bd=1e9;arr.forEach((p,i)=>{const d=hav(cur,p);if(d<bd){bd=d;bi=i}});cur=arr.splice(bi,1)[0];o.push(cur)}
+ const len=a=>{let t=0,p=s0;a.forEach(x=>{t+=hav(p,x);p=x});return t+(back?hav(p,s0):0)};let imp=true,g=0;
+ while(imp&&g++<40){imp=false;for(let i=0;i<o.length-1;i++)for(let j=i+1;j<o.length;j++){const n=o.slice(0,i).concat(o.slice(i,j+1).reverse(),o.slice(j+1));if(len(n)<len(o)-1e-6){o=n;imp=true}}}return st?o:[pts[0],...o]}
+function gmUrls(q,start,back){const L=q.slice();if(back&&start)L.push(start);const out=[];let org=start||null,i=0;while(i<L.length){const ch=L.slice(i,i+9),dest=ch[ch.length-1],wp=ch.slice(0,-1);out.push('https://www.google.com/maps/dir/?api=1&travelmode=driving'+(org?'&origin='+encodeURIComponent(org):'')+'&destination='+encodeURIComponent(dest)+(wp.length?'&waypoints='+wp.map(encodeURIComponent).join('%7C'):''));org=dest;i+=9}return out}
+const T=()=>DB.tour,tpts=()=>T().ids.map(cli).filter(Boolean);
+function tourOpt(){const P=tpts(),a=P.filter(c=>c.lat!=null),b=P.filter(c=>c.lat==null);if(a.length>1)T().ids=order(a,depPt(),T().back).concat(b).map(c=>c.n)}
+function tourAuto(){const t=T(),n=+t.n||6,r=+t.r||100,st=depPt();let pool=DB.c.map(c=>({c,i:cinfo(c)})).filter(x=>x.c.lat!=null&&['En retard','À prévoir'].includes(x.i.s)&&!t.ids.includes(x.c.n));
+ if(!pool.length){toast('Aucun client « en retard » ou « à prévoir » avec une position sur la carte');return}
+ pool.sort((a,b)=>ORD.indexOf(a.i.s)-ORD.indexOf(b.i.s)||a.i.j-b.i.j||(st?hav(st,a.c)-hav(st,b.c):0));const sd=pool[0];
+ const pick=[sd,...pool.slice(1).filter(x=>hav(sd.c,x.c)<=r).sort((a,b)=>hav(sd.c,a.c)-hav(sd.c,b.c))].slice(0,Math.max(1,n-t.ids.length)).map(x=>x.c.n);
+ t.ids=[...t.ids,...pick];tourOpt();save();render();toast(pick.length+' client(s) ajouté(s) autour de '+sd.c.n)}
+function tourPlan(){const t=T(),P=tpts();if(!P.length)return;snap();let k=0;P.forEach(c=>{const l=mach(c.n),u=l.filter(m=>info(m).s!=='OK');(u.length?u:l).forEach(m=>{m.pl=t.date;k++})});save();render();toast(k+' machine(s) planifiée(s) le '+fmt(t.date),1)}
+async function routeInfo(){const my=++TOK,P=tpts().filter(c=>c.lat!=null),st=depPt(),t=T(),R=(st?[st]:[]).concat(P);if(t.back&&st)R.push(st);const el=$('#tt');if(!el)return;
+ let legs=null,dist=0,dt=0,geom=null,est=true;
+ if(R.length>1){try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),9000);const r=await fetch('https://router.project-osrm.org/route/v1/driving/'+R.map(p=>p.lng+','+p.lat).join(';')+'?overview=full&geometries=geojson',{signal:ac.signal});clearTimeout(to);const j=await r.json();if(j.routes&&j.routes[0]){const o=j.routes[0];legs=o.legs;dist=o.distance/1000;dt=o.duration;geom=o.geometry;est=false}}catch(e){}
+  if(est){dist=0;for(let i=1;i<R.length;i++)dist+=hav(R[i-1],R[i])*1.25;dt=dist/65*3600}}
+ if(my!==TOK||!$('#tt'))return;
+ el.innerHTML=R.length>1?(est?'≈ ':'')+'<b>'+Math.round(dist)+' km</b> · '+(est?'≈ ':'')+'<b>'+dur(dt)+'</b> de route'+(est?' <span class="mu">(estimation à vol d’oiseau, itinéraire exact indisponible)</span>':''):'<span class="mu">Ajoutez au moins 2 points pour calculer le trajet.</span>';
+ P.forEach((c,i)=>{const s=$('#lg'+i);if(!s)return;const k=st?i:i-1;let d,tm;if(legs&&legs[k]){d=legs[k].distance/1000;tm=legs[k].duration}else if(k>=0){const a=k===0&&st?st:P[i-1];d=hav(a,c)*1.25;tm=d/65*3600}else return;s.textContent=(legs?'':'≈ ')+Math.round(d)+' km · '+dur(tm)});
+ const M=MAPS[0];if(M&&M._tl){if(geom)L.geoJSON(geom,{style:{color:'#0b6e6e',weight:5,opacity:.8}}).addTo(M._tl);else if(R.length>1)L.polyline(R.map(p=>[p.lat,p.lng]),{color:'#0b6e6e',weight:3,dashArray:'6 6'}).addTo(M._tl)}}
+/* ---------- cartes ---------- */
+function killMaps(){MAPS.forEach(m=>{try{m.remove()}catch(e){}});MAPS=[]}
+function mkMap(id){const el=$('#'+id);if(typeof L==='undefined'){el.innerHTML='<div class="emp">La carte a besoin d’une connexion internet.</div>';return null}const M=L.map(id,{scrollWheelZoom:true}).setView([46.6,2.5],6);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap'}).addTo(M);MAPS.push(M);return M}
+const icn=(s)=>L.divIcon({className:'',html:'<span class="mk '+CL[s]+'"></span>',iconSize:[18,18],iconAnchor:[9,9],popupAnchor:[0,-9]});
+function homeMk(M,b){const p=depPt();if(p&&typeof L!=='undefined'){L.marker([p.lat,p.lng],{icon:L.divIcon({className:'',html:'<span class="nb" style="background:#14201f">⌂</span>',iconSize:[26,26],iconAnchor:[13,13]})}).addTo(M).bindTooltip('Départ');b.push([p.lat,p.lng])}}
+function mapView(){const q=S.q.toLowerCase().trim(),L0=DB.c.map(c=>({c,i:cinfo(c)})).filter(x=>x.i.s!=='Sans machine'&&(!S.st||x.i.l.some(m=>info(m).s===S.st))&&(!S.g||x.i.l.some(m=>m.g===S.g))&&(!S.v||x.c.v===S.v)&&(!q||hay(x.c,x.i).includes(q)));
+ const ok=L0.filter(x=>x.c.lat!=null),no=L0.filter(x=>x.c.lat==null),na=no.filter(x=>addr(x.c)).length;
+ $('#det').innerHTML=`<div class="nav"><h2>Carte des clients</h2><button class="pr" data-a="geoAll">Placer les clients sur la carte${na?' ('+na+')':''}</button><button data-a="loc">Ma position</button></div>
+ <p class="mu">${ok.length} client(s) placé(s) · ${no.length} sans position${no.length?' (ajoutez une ville ou une adresse dans leur fiche)':''}. Couleur = urgence de la maintenance. Utilisez les pastilles du haut et la recherche pour filtrer.</p><div id="map" class="map"></div>
+ ${no.length?`<details style="margin-top:10px"><summary>Clients sans position (${no.length})</summary>${no.map(x=>`<div class="row" tabindex="0" data-a="open" data-v="${esc(x.c.n)}"><div class="m"><b>${esc(x.c.n)}</b><small>${esc(addr(x.c)||'Aucune adresse ni ville')}</small></div><span class="pill ${CL[x.i.s]}">${x.i.s}</span></div>`).join('')}</details>`:''}`;
+ const M=mkMap('map');if(!M)return;const b=[],grp=L.markerClusterGroup?L.markerClusterGroup({maxClusterRadius:40}):L.layerGroup();
+ ok.forEach(({c,i})=>{const mk=L.marker([c.lat,c.lng],{icon:icn(i.s)});mk.bindPopup(`<b>${esc(c.n)}</b><br>${esc(addr(c)||'')}${c.lq==='municipality'?' <i>(position approximative)</i>':''}<br><span class="pill ${CL[i.s]}">${i.s}</span> · ${units(i.l)} machine(s)<br><button data-a="open" data-v="${esc(c.n)}">Fiche</button><button data-a="tourAdd" data-v="${esc(c.n)}">+ Tournée</button><a href="${gmUrls([cq(c)],depQ())[0]}" target="_blank" rel="noopener"><button type="button">Itinéraire</button></a>`);grp.addLayer(mk);b.push([c.lat,c.lng])});
+ grp.addTo(M);homeMk(M,b);if(b.length)M.fitBounds(b,{padding:[30,30],maxZoom:11})}
+function tourView(){const t=T(),P=tpts(),st=depPt(),Q=P.map(cq),urls=Q.length?gmUrls(Q,depQ()||null,t.back):[],cnt=P.filter(c=>c.lat==null).length;
+ $('#det').innerHTML=`<div class="nav"><h2>Tournée du ${fmt(t.date)}</h2><button data-a="tourClear">Vider</button></div><div class="tr"><div>
+ <div class="fl"><div><label>Date</label><input type="date" id="tdate" value="${t.date}"></div><div style="flex:1;min-width:180px"><label>Départ (adresse)</label><input id="dep" style="width:100%" value="${esc(DB.dep.a)}" placeholder="Ex. 12 rue … Mulhouse"></div><button data-a="depGo">Localiser</button></div>
+ <div class="fl"><label style="display:flex;gap:6px;align-items:center;font-size:14px;color:var(--tx)"><input type="checkbox" id="tback" ${t.back?'checked':''}> Retour au départ</label></div>
+ <div class="fl"><div><label>Nombre de clients</label><input type="number" id="tn" min="1" max="20" value="${t.n}" style="width:90px"></div><div><label>Rayon (km)</label><input type="number" id="tr" min="5" max="800" value="${t.r}" style="width:90px"></div><button class="pr" data-a="tourAuto">Proposer une tournée</button></div>
+ <div class="fl"><select id="tadd" aria-label="Ajouter un client"><option value="">+ Ajouter un client…</option>${DB.c.filter(c=>!t.ids.includes(c.n)).sort((a,b)=>a.n.localeCompare(b.n)).map(c=>`<option>${esc(c.n)}</option>`).join('')}</select><button data-a="tourPl">Visites planifiées ce jour</button></div>
+ ${P.length?P.map((c,i)=>{const ci=cinfo(c);return`<div class="st2"><span class="num">${i+1}</span><div class="m"><b style="cursor:pointer" data-a="open" data-v="${esc(c.n)}">${esc(c.n)}</b><small>${esc(c.v||'—')} · ${units(ci.l)} machine(s) · <span class="pill ${CL[ci.s]}">${ci.s}</span>${c.lat==null?' · <span class="warn">sans position</span>':''}<br><span id="lg${i}" class="mu"></span></small></div><button data-a="tourUp" data-v="${i}" aria-label="Monter">↑</button><button data-a="tourDn" data-v="${i}" aria-label="Descendre">↓</button><button class="dg" data-a="tourDel" data-v="${i}" aria-label="Retirer">✕</button></div>`}).join(''):'<div class="emp">Aucun arrêt. Cliquez sur « Proposer une tournée » ou ajoutez des clients (depuis la carte, le tableau ou une fiche).</div>'}
+ ${cnt?`<p class="warn">${cnt} client(s) sans position : ils restent dans la liste et Google Maps les cherchera par leur nom ou adresse.</p>`:''}
+ <p id="tt" style="margin:10px 0"></p>
+ <div class="g"><button class="pr" data-a="tourOpt">Optimiser l’ordre</button>${urls.map((u,i)=>`<a href="${u}" target="_blank" rel="noopener"><button type="button" class="pr">Google Maps${urls.length>1?' – partie '+(i+1):''}</button></a>`).join('')}${P.length?`<a href="https://waze.com/ul?q=${encodeURIComponent(Q[0])}&navigate=yes" target="_blank" rel="noopener"><button type="button">Waze (1er arrêt)</button></a>`:''}<button data-a="tourSheet">Feuille de route</button><button data-a="tourPlan">Planifier ces visites le ${fmt(t.date)}</button></div>
+ </div><div><div id="tmap" class="map s"></div></div></div>`;
+ const M=mkMap('tmap');if(M){M._tl=L.layerGroup().addTo(M);const b=[];homeMk(M,b);P.forEach((c,i)=>{if(c.lat==null)return;L.marker([c.lat,c.lng],{icon:L.divIcon({className:'',html:'<span class="nb">'+(i+1)+'</span>',iconSize:[26,26],iconAnchor:[13,13]})}).addTo(M).bindTooltip(c.n);b.push([c.lat,c.lng])});if(b.length)M.fitBounds(b,{padding:[30,30],maxZoom:12})}
+ routeInfo()}
+/* ---------- impression ---------- */
+function printDoc(title,body){const w=open('','_blank');if(!w){toast('Autorisez les fenêtres pop-up pour imprimer ou enregistrer en PDF');return}w.document.write('<!doctype html><html lang="fr"><meta charset="utf-8"><title>'+esc(title)+'</title><style>body{font:14px/1.45 "Segoe UI",Arial,sans-serif;color:#111;margin:24px}h1{font-size:20px;margin:0 0 4px}h3{margin:18px 0 6px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top}th{background:#eee;width:28%}.t th{width:auto}.sg{display:flex;gap:24px;margin-top:30px}.sg div{flex:1;border:1px solid #999;height:90px;padding:6px}small{color:#555}</style>'+body+'<script>setTimeout(function(){print()},300)<\/script>');w.document.close()}
+function rapport(id,ix){const m=DB.m.find(x=>x.id==id),c=cli(m.c),h=m.h[ix];if(!h)return;const f=info(m);printDoc('Rapport d’intervention',`<h1>${esc(DB.co)} – Rapport d’intervention</h1><small>Édité le ${fmt(iso(today()))}</small><h3>Client</h3><table><tr><th>Client</th><td>${esc(c.n)}</td></tr><tr><th>Contact</th><td>${esc(c.ct)} ${esc(c.t)} ${esc(c.e)}</td></tr><tr><th>Adresse</th><td>${esc(addr(c))}</td></tr></table><h3>Machine</h3><table><tr><th>Gamme / modèle</th><td>${esc(m.g)} ${esc(ml(m))}</td></tr><tr><th>N° de série</th><td>${esc(m.sn)}</td></tr></table><h3>Intervention</h3><table><tr><th>Date</th><td>${fmt(h.d)}</td></tr><tr><th>Type</th><td>${esc(h.ty||'')}</td></tr><tr><th>Technicien</th><td>${esc(h.te||'')}</td></tr><tr><th>Prochaine maintenance</th><td>${fmt(f.n)}</td></tr></table><h3>Observations</h3><table><tr><td style="height:120px">${esc(h.n||'').replace(/\n/g,'<br>')}</td></tr></table><div class="sg"><div>Signature du technicien</div><div>Signature du client</div></div>`)}
+function fiche(n){const c=cli(n),l=mach(n);printDoc('Fiche maintenance – '+n,`<h1>${esc(DB.co)} – Fiche maintenance</h1><small>Édité le ${fmt(iso(today()))}</small><h3>${esc(c.n)}</h3><p>${esc([c.ct,c.t,c.e].filter(Boolean).join(' · '))}<br>${esc(addr(c))}</p>${c.no?'<p><b>Notes SAV :</b> '+esc(c.no)+'</p>':''}<table class="t"><tr><th>Machine</th><th>N° de série</th><th>Dernière</th><th>Prochaine</th><th>Statut</th></tr>${l.map(m=>{const i=info(m);return`<tr><td>${esc(m.g)} ${esc(ml(m))}${m.q>1?' ×'+m.q:''}</td><td>${esc(m.sn)}</td><td>${fmt(m.d)}</td><td>${fmt(i.n)}</td><td>${i.s}</td></tr>`}).join('')}</table>`)}
+function sheet(){const P=tpts(),t=T();printDoc('Feuille de route',`<h1>${esc(DB.co)} – Feuille de route du ${fmt(t.date)}</h1>${DB.dep.a?'<p>Départ : '+esc(DB.dep.a)+'</p>':''}<table class="t"><tr><th>#</th><th>Client</th><th>Adresse / téléphone</th><th>Machines à traiter</th><th>Notes</th></tr>${P.map((c,i)=>`<tr><td>${i+1}</td><td><b>${esc(c.n)}</b><br>${esc(c.ct)}</td><td>${esc(addr(c))}<br>${esc(c.t)}</td><td>${mach(c.n).map(m=>esc(m.g+' '+ml(m)+(m.sn?' n° '+m.sn:'')+' ('+info(m).s+')')).join('<br>')}</td><td style="width:20%">${esc(c.no)}</td></tr>`).join('')}</table>`)}
+/* ---------- affichage ---------- */
+const mrow=(m,i,sub,a)=>{const c=cli(m.c);return`<div class="row" tabindex="0" data-a="${a||'sel'}" data-v="${esc(m.c)}"><div class="m"><b>${esc(m.c)}</b><small>${esc(m.mo||m.g)} ${esc(m.sn)} · ${sub}${c&&c.rel?' · relancé le '+fmt(c.rel):''}</small></div><span class="pill ${CL[i.s]}">${i.s}</span><button class="pr" data-a="done" data-v="${m.id}" title="Maintenance effectuée">Fait</button></div>`};
+const sub=(m,i,t0)=>m.pl>=t0?'visite le '+fmt(m.pl):i.n?'échéance '+fmt(i.n):'dernière : '+fmt(m.d);
+function render(){killMaps();
+ const cs=DB.c.map(c=>({c,i:cinfo(c)})),cnt={};ORD.forEach(o=>cnt[o]=0);DB.m.forEach(m=>cnt[info(m).s]+=+m.q||1);
+ $('#ttx').textContent='SAV';document.title='SAV '+DB.co+' – maintenances';
+ $('#kp').innerHTML=`<button style="--c:var(--ac)" data-a="goC"><b>${DB.c.length}</b><span>Clients</span></button><button style="--c:var(--ac)" data-a="goB"><b>${units(DB.m)}</b><span>Parc (machines)</span></button>`+ORD.map(o=>`<button data-a="st" data-v="${o}" class="${CL[o]} ${S.st===o?'on':''}"><b>${cnt[o]}</b><span>${o}</span></button>`).join('');
+ const bd=$('#bdg');bd.textContent=cnt['En retard']+' en retard';bd.classList.toggle('z',!cnt['En retard']);
+ $('#gf').innerHTML='<option value="">Toutes les gammes</option>'+[...new Set(DB.m.map(m=>m.g).filter(Boolean))].sort().map(g=>`<option ${g===S.g?'selected':''}>${esc(g)}</option>`).join('');
+ $('#vf').innerHTML='<option value="">Toutes les villes</option>'+[...new Set(DB.c.map(c=>c.v).filter(Boolean))].sort((a,b)=>a.localeCompare(b)).map(g=>`<option ${g===S.v?'selected':''}>${esc(g)}</option>`).join('');
+ document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.mode));
+ const W=['a','p','k','r','b'].includes(S.mode);document.body.classList.toggle('w',W);$('#tb').style.display=['a','p','r'].includes(S.mode)?'none':'flex';$('#so').style.display=S.mode==='c'?'':'none';
+ const dd=bkDays(),bn=$('#bn');if(dd>=7&&!bnx&&!API){$('#bnt').textContent=DB.bk?'Dernière sauvegarde il y a '+dd+' jours. Pensez à sauvegarder votre base.':'Aucune sauvegarde faite pour l’instant. Pensez à sauvegarder votre base.';bn.classList.add('s')}else bn.classList.remove('s');
+ const q=S.q.toLowerCase().trim(),gm=m=>!S.g||m.g===S.g,vm=m=>!S.v||(cli(m.c)||{}).v===S.v,mq=(m,i)=>!q||[m.c,m.g,m.mo,m.rf,m.sn,m.no,i.s,(cli(m.c)||{}).v].join(' ').toLowerCase().includes(q),t0=iso(today());let h='';
+ if(S.mode==='a'){$('#det').innerHTML=dash();return}
+ if(S.mode==='p'){$('#det').innerHTML=plan();return}
+ if(S.mode==='k'){mapView();return}
+ if(S.mode==='r'){tourView();return}
+ if(S.mode==='b'){$('#det').innerHTML=tableV(mq,gm,vm);return}
+ if(S.mode==='c'){
+  const L=cs.filter(x=>(!S.st||x.i.l.some(m=>info(m).s===S.st))&&(!S.g||x.i.l.some(gm))&&(!S.v||x.c.v===S.v)&&(!q||hay(x.c,x.i).includes(q))).sort((a,b)=>S.o==='n'?a.c.n.localeCompare(b.c.n):S.o==='v'?(a.c.v||'~').localeCompare(b.c.v||'~')||a.c.n.localeCompare(b.c.n):ORD.indexOf(a.i.s)-ORD.indexOf(b.i.s)||a.i.j-b.i.j||a.c.n.localeCompare(b.c.n));
+  h=L.map(({c,i})=>`<div class="row ${S.sel===c.n?'on':''}" tabindex="0" data-a="sel" data-v="${esc(c.n)}"><div class="m"><b>${esc(c.n)}</b><small>${esc(c.v||'—')} · ${units(i.l)} machine(s)</small></div><span class="pill ${CL[i.s]}">${i.s}</span></div>`).join('')||(anSec()?'':'<div class="emp">'+(DB.c.length?'Aucun client trouvé.':'La liste est vide : tapez un nom pour retrouver un client du Sheet, ou cliquez sur « + Client ».')+'</div>');h=anSec()+h}
+ else{
+  const L=DB.m.map(m=>({m,i:info(m)})).filter(({m,i})=>i.s!=='OK'&&(!S.st||i.s===S.st)&&gm(m)&&vm(m)&&mq(m,i)).sort((a,b)=>ORD.indexOf(a.i.s)-ORD.indexOf(b.i.s)||(a.i.j??0)-(b.i.j??0));
+  h=L.map(({m,i})=>mrow(m,i,sub(m,i,t0))).join('')||'<div class="emp">Rien à traiter pour ce filtre.</div>'}
+ $('#list').innerHTML=h;detail()}
+function bkDays(){return DB.bk?Math.floor((today()-pd(DB.bk))/864e5):99}
+function dash(){const t0=iso(today()),all=DB.m.map(m=>({m,i:info(m)})),urg=all.filter(x=>x.i.s!=='OK').sort((a,b)=>ORD.indexOf(a.i.s)-ORD.indexOf(b.i.s)||(a.i.j??0)-(b.i.j??0)),lim=new Date(today());lim.setDate(lim.getDate()+30);const l30=iso(lim);
+ const soon=all.map(x=>({...x,k:x.m.pl>=t0?x.m.pl:(x.i.n&&x.i.j>=0?x.i.n:'')})).filter(x=>x.k&&x.k<=l30).sort((a,b)=>a.k.localeCompare(b.k));
+ const g={},A={t:0,ok:0};all.forEach(({m,i})=>{const q=+m.q||1;A.t+=q;if(i.s==='OK')A.ok+=q;g[m.g||'—']=(g[m.g||'—']||0)+q});const mx=Math.max(1,...Object.values(g));
+ const ms=[];for(let k=5;k>=0;k--){const d=new Date(today().getFullYear(),today().getMonth()-k,1),key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');ms.push([d.toLocaleDateString('fr-FR',{month:'short'}),DB.m.reduce((a,m)=>a+m.h.filter(x=>x.d.startsWith(key)).length,0)])}const mm=Math.max(1,...ms.map(x=>x[1]));
+ const noGeo=DB.c.filter(c=>c.lat==null).length,g60=iso(new Date(today().getTime()+60*864e5)),gar=DB.m.filter(m=>m.ga&&m.ga>=t0&&m.ga<=g60).length,pasP=DB.m.filter(m=>m.pl&&m.pl<t0).length;
+ return`<div class="cards"><div class="card"><h3>À traiter en priorité</h3>${urg.slice(0,10).map(({m,i})=>mrow(m,i,sub(m,i,t0),'open')).join('')||'<div class="emp">Rien à traiter 🎉</div>'}${urg.length>10?`<div class="g"><button data-a="late">Voir les ${urg.length} lignes à traiter</button></div>`:''}</div>
+ <div class="card"><h3>Les 30 prochains jours</h3>${soon.map(({m,i,k})=>`<div class="row" tabindex="0" data-a="open" data-v="${esc(m.c)}"><div class="m"><b>${esc(m.c)}</b><small>${fmt(k)} · ${m.pl>=t0?'visite planifiée':'échéance'} · ${esc(m.mo||m.g)}</small></div><span class="pill ${CL[i.s]}">${i.s}</span></div>`).join('')||'<div class="emp">Aucune échéance dans les 30 jours.</div>'}<div class="g"><button data-a="mode" data-v="p">Ouvrir le planning</button><button data-a="mode" data-v="r">Préparer une tournée</button></div></div>
+ <div class="card"><h3>Parc à jour</h3><p><b style="font-size:28px">${Math.round(A.ok/Math.max(A.t,1)*100)} %</b> du parc est à jour (${A.ok} sur ${A.t}).</p><h3 style="margin-top:12px">Parc par gamme</h3>${Object.entries(g).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="gr"><span>${esc(k)}</span><i style="width:${v/mx*100}%"></i><b>${v}</b></div>`).join('')}</div>
+ <div class="card"><h3>Interventions réalisées</h3>${ms.map(([k,v])=>`<div class="gr"><span>${k}</span><i style="width:${v/mm*100}%"></i><b>${v}</b></div>`).join('')}<h3 style="margin-top:12px">À compléter</h3><p class="mu">${noGeo} client(s) sans position sur la carte · ${DB.c.filter(c=>!c.t&&!c.e).length} sans téléphone ni e-mail · ${DB.m.filter(m=>!m.sn).length} machine(s) sans n° de série · ${DB.m.filter(m=>m.cf==='À confirmer').length} date(s) à confirmer · ${gar} garantie(s) expirent sous 60 j · ${pasP} visite(s) planifiée(s) dépassée(s)</p>${noGeo?'<div class="g"><button data-a="geoAll">Placer les clients sur la carte</button></div>':''}</div></div>`}
+function evs(){const r=[];DB.m.forEach(m=>{const i=info(m);if(m.pl)r.push({m,i,k:m.pl,pl:1});else if(i.n)r.push({m,i,k:i.n,pl:0})});return r}
+function plan(){const{y,m:mo}=S.cal,E=evs().filter(e=>(!S.st||e.i.s===S.st)&&(!S.g||e.m.g===S.g)&&(!S.v||(cli(e.m.c)||{}).v===S.v)&&(!S.q||[e.m.c,e.m.mo,e.m.sn,e.m.g].join(' ').toLowerCase().includes(S.q.toLowerCase()))),t0=iso(today()),pre=y+'-'+String(mo+1).padStart(2,'0'),by={};
+ E.filter(e=>e.k.startsWith(pre)).forEach(e=>{(by[e.k]=by[e.k]||{})[e.m.c]=(by[e.k][e.m.c]||[]).concat(e)});
+ const off=(new Date(y,mo,1).getDay()+6)%7,nd=new Date(y,mo+1,0).getDate(),tot=Math.ceil((off+nd)/7)*7;let cells='';
+ for(let k=0;k<tot;k++){const d=k-off+1;if(d<1||d>nd){cells+='<div class="cd e o2"></div>';continue}const key=pre+'-'+String(d).padStart(2,'0'),G=by[key]||{},ks=Object.keys(G);
+  cells+=`<div class="cd ${key===t0?'t':''}" data-a="day" data-v="${key}"><span class="n2">${d}</span>${ks.slice(0,3).map(c=>{const L=G[c],w=ORD.find(o=>L.some(e=>e.i.s===o)),pl=L.some(e=>e.pl);return`<button class="ch ${CL[w]} ${pl?'pl':''}" data-a="open" data-v="${esc(c)}" title="${esc(c)}">${esc(c)}${L.length>1?' ×'+L.length:''}</button>`}).join('')}${ks.length>3?`<span class="mu" style="font-size:11px">+${ks.length-3} autre(s)</span>`:''}</div>`}
+ const list=E.filter(e=>e.k.startsWith(pre)).sort((a,b)=>a.k.localeCompare(b.k)),late=DB.m.filter(m=>info(m).s==='En retard').length;
+ return`<style>.cp{text-transform:capitalize}</style><div class="nav"><button data-a="calP" aria-label="Mois précédent">◀</button><h2 class="cp">${new Date(y,mo,1).toLocaleDateString('fr-FR',{month:'long',year:'numeric'})}</h2><button data-a="calT">Aujourd’hui</button><button data-a="calN" aria-label="Mois suivant">▶</button><button data-a="ics">Exporter .ics</button><button data-a="print">Imprimer</button></div>
+ <p class="mu">Contour = échéance de maintenance · plein = visite planifiée. Cliquez sur un jour pour y planifier une visite, sur un client pour ouvrir sa fiche.${late?` <b style="color:var(--r);cursor:pointer" data-a="late">${late} machine(s) en retard →</b>`:''}</p>
+ <div class="cal">${['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map(x=>`<div class="dn">${x}</div>`).join('')}${cells}</div>
+ <h3 style="margin-top:16px">Maintenances du mois (${list.length})</h3><div class="tw"><table><thead><tr><th>Date</th><th>Client</th><th>Machine</th><th>Type</th><th>Statut</th><th></th></tr></thead><tbody>${list.map(e=>`<tr><td>${fmt(e.k)}</td><td class="c" data-a="open" data-v="${esc(e.m.c)}">${esc(e.m.c)}</td><td>${esc(e.m.g+' '+ml(e.m))}</td><td>${e.pl?'Visite planifiée':'Échéance'}</td><td><span class="pill ${CL[e.i.s]}">${e.i.s}</span></td><td><button class="pr" data-a="done" data-v="${e.m.id}">Fait</button></td></tr>`).join('')||'<tr><td colspan="6" class="mu">Rien ce mois-ci.</td></tr>'}</tbody></table></div>`}
+const TC=['Client','Ville','Gamme','Modèle','N° de série','Qté','Dernière','Prochaine','Statut'];
+const TV=[r=>r.m.c.toLowerCase(),r=>(r.c.v||'~').toLowerCase(),r=>r.m.g,r=>(r.m.mo||r.m.rf||'').toLowerCase(),r=>r.m.sn||'~',r=>+r.m.q||1,r=>r.m.d||'~',r=>r.i.n||'~',r=>ORD.indexOf(r.i.s)];
+function rowsB(mq,gm,vm){const k=S.ts.k,d=S.ts.d;return DB.m.map(m=>({m,i:info(m),c:cli(m.c)||{}})).filter(r=>(!S.st||r.i.s===S.st)&&gm(r.m)&&vm(r.m)&&mq(r.m,r.i)).sort((a,b)=>{const x=TV[k](a),y=TV[k](b);return(x<y?-1:x>y?1:(a.i.j??9e9)-(b.i.j??9e9)||a.m.c.localeCompare(b.m.c))*d})}
+function tableV(mq,gm,vm){const R=rowsB(mq,gm,vm);window.__R=R;return`<div class="nav"><h2>Tableau des maintenances (${R.length})</h2><button data-a="exV">Exporter en Excel</button><button data-a="tourSel">+ Tournée (${S.chk.size})</button><button data-a="print">Imprimer</button></div><div class="tw" style="max-height:70vh"><table><thead><tr><th><input type="checkbox" data-a="chkAll" aria-label="Tout cocher"></th>${TC.map((t,i)=>`<th data-a="sort" data-v="${i}">${t}${S.ts.k===i?(S.ts.d>0?' ▲':' ▼'):''}</th>`).join('')}<th></th></tr></thead><tbody>${R.map(r=>`<tr><td><input type="checkbox" data-a="chk" data-v="${r.m.id}" ${S.chk.has(r.m.id)?'checked':''} aria-label="Sélectionner"></td><td class="c" data-a="open" data-v="${esc(r.m.c)}">${esc(r.m.c)}</td><td>${esc(r.c.v||'')}</td><td>${esc(r.m.g)}</td><td>${esc(ml(r.m))}</td><td>${esc(r.m.sn)}</td><td>${r.m.q||1}</td><td>${fmt(r.m.d)}</td><td>${fmt(r.i.n)}${r.i.j!=null?' <small>('+(r.i.j<0?-r.i.j+' j de retard':r.i.j+' j')+')</small>':''}</td><td><span class="pill ${CL[r.i.s]}">${r.i.s}</span></td><td><button class="pr" data-a="done" data-v="${r.m.id}">Fait</button></td></tr>`).join('')||'<tr><td colspan="11" class="mu">Aucune machine pour ce filtre.</td></tr>'}</tbody></table></div>`}
+function detail(){const c=cli(S.sel),e=$('#det');if(!c){e.innerHTML='<div class="emp">Choisissez un client dans la liste pour voir sa fiche.</div>';return}
+ const i=cinfo(c),sn={},t0=iso(today());DB.m.forEach(m=>m.sn&&m.sn!=='/'&&(sn[m.sn]=(sn[m.sn]||0)+1));
+ const H=[];i.l.forEach(m=>m.h.forEach((x,ix)=>H.push({...x,m,ix})));H.sort((a,b)=>b.d.localeCompare(a.d));const inT=DB.tour.ids.includes(c.n);
+ e.innerHTML=`<button class="back" data-a="back">← Liste</button><div class="dh"><div><h2>${esc(c.n)}</h2><span class="pill ${CL[i.s]}">${i.s}</span><div class="mu">${[c.ct,addr(c)].filter(Boolean).map(esc).join(' · ')}${c.vg?' <i>(ville déduite du nom)</i>':''}</div><div>${c.t?`<a href="tel:${esc(c.t.replace(/\s/g,''))}">${esc(c.t)}</a> `:''}${c.e?`<a href="mailto:${esc(c.e)}">${esc(c.e)}</a>`:''}</div>${c.rel?`<div class="mu">Dernière relance : ${fmt(c.rel)}</div>`:''}</div>
+ <div class="g"><a href="${gmUrls([cq(c)],depQ()||null)[0]}" target="_blank" rel="noopener"><button type="button" class="pr">Itinéraire</button></a><button data-a="relance" data-v="${esc(c.n)}">Relancer par e-mail</button><button data-a="tourAdd" data-v="${esc(c.n)}" ${inT?'disabled':''}>${inT?'Dans la tournée':'+ Tournée'}</button><button data-a="fiche" data-v="${esc(c.n)}">Fiche PDF</button><button data-a="editC" data-v="${esc(c.n)}">Modifier</button>${ADM?`<button class="dg" data-a="delC" data-v="${esc(c.n)}">Supprimer</button>`:''}</div></div>
+ ${c.no?`<p><b>Notes SAV</b><br>${esc(c.no).replace(/\n/g,'<br>')}</p>`:''}
+ <div class="dh" style="margin-top:16px"><h3>Machines (${units(i.l)})</h3><button class="pr" data-a="addM" data-v="${esc(c.n)}">+ Machine</button></div>
+ ${i.l.map(m=>{const f=info(m);return`<div class="mc ${CL[f.s]}"><div class="dh"><div><h4>${esc(ml(m))}${m.q>1?' ×'+m.q:''}</h4><span class="mu">${esc(m.g)}${m.sn?' · n° '+esc(m.sn):''}${m.ct?' · '+esc(m.ct):''}</span></div><span class="pill ${CL[f.s]}">${f.s}</span></div>
+ <div>Dernière maintenance : <b>${fmt(m.d)}</b>${m.cf==='À confirmer'?' <span class="warn">(date à confirmer)</span>':''}<br>Prochaine : <b>${fmt(f.n)}</b>${f.j!=null?' <span class="mu">('+(f.j<0?'retard de '+-f.j+' j':'dans '+f.j+' j')+')</span>':''}</div>
+ ${m.pl?`<div>Visite planifiée : <b>${fmt(m.pl)}</b></div>`:''}${m.ga?`<div class="mu">${m.ga>=t0?'Sous garantie jusqu’au ':'Garantie expirée le '}${fmt(m.ga)}</div>`:''}
+ ${m.no?`<div class="mu">${esc(m.no)}</div>`:''}${m.sn&&sn[m.sn]>1?'<div class="warn">⚠ N° de série en double</div>':''}
+ <div class="g"><button class="pr" data-a="done" data-v="${m.id}">Maintenance effectuée</button><button data-a="plan" data-v="${m.id}">Planifier</button><button data-a="editM" data-v="${m.id}">Modifier</button>${m.dv?`<a href="${esc(m.dv)}" target="_blank" rel="noopener"><button type="button">Ouvrir le devis</button></a>`:''}${ADM?`<button class="dg" data-a="delM" data-v="${m.id}">Supprimer</button>`:''}</div></div>`}).join('')||'<div class="emp">Ce client n’a pas encore de machine.</div>'}
+ <div class="dh" style="margin-top:16px"><h3>Documents</h3><button data-a="addDoc" data-v="${esc(c.n)}">+ Document</button></div>
+ ${c.docs.length?c.docs.map((d,ix)=>`<div class="row" style="cursor:default"><div class="m"><b><a href="${esc(d.u)}" target="_blank" rel="noopener">${esc(d.t)}</a></b><small>${esc(d.c)}${d.d?' · '+fmt(d.d):''}</small></div><button class="dg" data-a="delDoc" data-v="${esc(c.n)}|${ix}" aria-label="Retirer">✕</button></div>`).join(''):'<p class="mu">Aucun document. Ajoutez des liens (devis, factures, rapports…).</p>'}
+ <h3 style="margin-top:16px">Historique des interventions</h3>${H.length?H.slice(0,15).map(x=>`<div class="row" style="cursor:default"><div class="m"><b>${fmt(x.d)} · ${esc(x.ty||'Maintenance')}</b><small>${esc(x.m.g+' '+ml(x.m))}${x.te?' · '+esc(x.te):''}${x.n?' · '+esc(x.n):''}</small></div><button data-a="rapport" data-v="${x.m.id}:${x.ix}">Rapport</button></div>`).join(''):'<p class="mu">Aucune intervention enregistrée.</p>'}`}
+/* ---------- formulaires ---------- */
+const ov2=o=>Array.isArray(o)?o:[o,o];
+function ask(t,F,ok,pre,wide){const f=$('#f'),fld=x=>`<label>${x.l}${x.t==='area'?`<textarea name="${x.k}" rows="3">${esc(x.v)}</textarea>`:x.t==='sel'?`<select name="${x.k}">${x.o.map(ov2).map(([v,l])=>`<option value="${esc(v)}" ${v==x.v?'selected':''}>${esc(l)}</option>`).join('')}</select>`:`<input name="${x.k}" type="${x.t||'text'}" value="${esc(x.v)}" ${x.r?'required':''}>`}</label>`,R=F.filter(x=>!x.opt),O=F.filter(x=>x.opt);
+ $('#dlg').className=wide?'W':'';f.innerHTML=`<h3>${t}</h3>${pre||''}`+R.map(fld).join('')+(O.length?`<details ${O.some(x=>x.v)?'open':''}><summary>Plus de champs (facultatif)</summary>${O.map(fld).join('')}</details>`:'')+'<div class="bt"><button type="button" data-a="x">Annuler</button><button class="pr">Enregistrer</button></div>';
+ f.onsubmit=e=>{e.preventDefault();const o=Object.fromEntries(new FormData(f));Object.keys(o).forEach(k=>o[k]=String(o[k]).trim());snap();if(ok(o)!==false){save();$('#dlg').close();render();toast('Enregistré',1)}};$('#dlg').showModal()}
+const CF=(c,nw)=>[{k:'n',l:'Nom du client',v:c.n,r:1},{k:'v',l:'Ville',v:c.v},{k:'t',l:'Téléphone',t:'tel',v:c.t,opt:nw},{k:'ct',l:'Contact',v:c.ct,opt:nw},{k:'e',l:'E-mail',t:'email',v:c.e,opt:nw},{k:'ad',l:'Adresse (rue)',v:c.ad,opt:nw},{k:'cp',l:'Code postal',v:c.cp,opt:nw},{k:'no',l:'Notes SAV',t:'area',v:c.no,opt:nw}];
+const MF=m=>[{k:'c',l:'Client',t:'sel',o:DB.c.map(c=>c.n).sort((a,b)=>a.localeCompare(b)),v:m.c},{k:'g',l:'Gamme',t:'sel',o:[...new Set([...DB.gammes,m.g].filter(Boolean))],v:m.g||DB.gammes[0]},{k:'mo',l:'Modèle',v:m.mo},{k:'sn',l:'N° de série',v:m.sn},{k:'q',l:'Quantité',t:'number',v:m.q||1},{k:'d',l:'Dernière maintenance',t:'date',v:m.d},{k:'rf',l:'Référence',v:m.rf,opt:1},{k:'p',l:'Périodicité en mois (vide = '+DB.per+')',t:'number',v:m.p,opt:1},{k:'cf',l:'Date confirmée ?',t:'sel',o:['Oui','À confirmer'],v:m.cf||'Oui',opt:1},{k:'ct',l:'Type de suivi',t:'sel',o:[['','—'],'Contrat de maintenance','À la demande'],v:m.ct,opt:1},{k:'ga',l:'Fin de garantie',t:'date',v:m.ga,opt:1},{k:'dv',l:'Lien du devis (URL)',v:m.dv,opt:1},{k:'no',l:'Notes machine',t:'area',v:m.no,opt:1}];
+const TPLV=(c,l)=>DB.tpl.b.replace(/\{client\}/g,c.n).replace(/\{contact\}/g,c.ct||'').replace(/\{machines\}/g,l.map(m=>'- '+[m.mo||m.g,m.sn&&'n° '+m.sn].filter(Boolean).join(' ')+' : '+(info(m).n?'échéance le '+fmt(info(m).n):'date à convenir')).join('\n')).replace(/Bonjour ,/,'Bonjour,');
+function act(a,v){
+ if(a==='mode'){S.mode=v;S.st=null;render()}else if(a==='st'){S.st=S.st===v?null:v;if(S.mode==='a')S.mode='b';render()}
+ else if(a==='goC'){S.mode='c';S.st=null;render()}else if(a==='goB'){S.mode='b';S.st=null;render()}else if(a==='late'){S.mode='t';S.st='En retard';render()}
+ else if(a==='sel'){S.sel=v;document.body.classList.add('d');render();scrollTo(0,0)}
+ else if(a==='open'){S.mode='c';S.st=null;S.q='';$('#q').value='';S.sel=v;document.body.classList.add('d');render();scrollTo(0,0)}
+ else if(a==='back'){document.body.classList.remove('d')}else if(a==='x')$('#dlg').close();
+ else if(a==='theme'){const o=['auto','light','dark'],n=o[(o.indexOf(localStorage.getItem(TK)||'auto')+1)%3];try{localStorage.setItem(TK,n)}catch(e){}theme();toast('Thème : '+{auto:'automatique',light:'clair',dark:'sombre'}[n])}
+ else if(a==='cloud'){if(CLD.st==='conflict'||CLD.st==='err'||CLD.st==='offline'||!API){if(!API)admAsk();else cloudLoad()}else if(META.dirty)cloudPush();else cloudLoad(false);toast(CLD.msg||'Synchronisation lancée')}else if(a==='lock')lockNow();else if(a==='bnx'){bnx=true;render()}else if(a==='bkup')exportJ();
+ else if(a==='done'){const m=DB.m.find(x=>x.id==v);ask('Maintenance effectuée – '+esc(m.c),[{k:'d',l:'Date de l’intervention',t:'date',v:iso(today()),r:1},{k:'ty',l:'Type',t:'sel',o:DB.types,v:'Préventive'},{k:'te',l:'Technicien',v:DB.tech||''},{k:'n',l:'Note (facultatif)',t:'area'}],o=>{m.h.unshift({d:o.d,n:o.n,ty:o.ty,te:o.te});m.d=o.d;m.cf='Oui';m.pl='';DB.tech=o.te})}
+ else if(a==='addC'){PICK=null;ask('Nouveau client',CF({},1),o=>{if(DB.c.some(c=>norm(c.n)===norm(o.n))){toast('Ce client existe déjà');return false}const c=mkC(o),M=PICK&&norm(PICK.n)===norm(o.n)&&$('#amc')&&$('#amc').checked?anMach(PICK.n):[];DB.c.push(c);M.forEach(m=>DB.m.push({...m,c:c.n,q:+m.q||1,id:Math.max(0,...DB.m.map(x=>x.id))+1,h:[],pl:''}));mig(DB);S.mode='c';S.sel=c.n;document.body.classList.add('d');geoOne(c).then(()=>render())},'<div id="amw" style="display:none"><label><input type="checkbox" id="amc" checked> Ajouter aussi ses machines du Sheet (<span id="amn"></span>)</label></div>');anBind()}
+ else if(a==='editC'){const c=cli(v);ask('Modifier le client',CF(c),o=>{if(o.n!==c.n&&DB.c.some(x=>norm(x.n)===norm(o.n))){toast('Ce nom est déjà utilisé');return false}const ch=addr(c)!==addr({ad:o.ad,cp:o.cp,v:o.v});DB.m.forEach(m=>{if(m.c===c.n)m.c=o.n});DB.tour.ids=DB.tour.ids.map(n=>n===c.n?o.n:n);Object.assign(c,o);S.sel=o.n;if(ch){c.lat=c.lng=null;c.vg=0;geoOne(c).then(()=>render())}})}
+ else if(a==='delC'){if(!ADM)return toast('Réservé à l’administrateur');if(confirm(mach(v).length?'Supprimer '+v+' et ses '+mach(v).length+' ligne(s) de machines ?':'Supprimer '+v+' ?')){snap();DB.m=DB.m.filter(m=>m.c!==v);DB.c=DB.c.filter(c=>c.n!==v);DB.tour.ids=DB.tour.ids.filter(n=>n!==v);S.sel=null;save();document.body.classList.remove('d');render();toast('Client supprimé',1)}}
+ else if(a==='addM')ask('Nouvelle machine',MF({c:v,q:1}),o=>{DB.m.push({...o,q:+o.q||1,id:Math.max(0,...DB.m.map(m=>m.id))+1,h:[],pl:''})});
+ else if(a==='editM'){const m=DB.m.find(x=>x.id==v);ask('Modifier la machine',MF(m),o=>{Object.assign(m,o,{q:+o.q||1})})}
+ else if(a==='delM'){if(!ADM)return toast('Réservé à l’administrateur');if(confirm('Supprimer cette machine ?')){snap();DB.m=DB.m.filter(m=>m.id!=v);save();render();toast('Machine supprimée',1)}}
+ else if(a==='plan'){const m=DB.m.find(x=>x.id==v);ask('Planifier une visite – '+esc(m.c),[{k:'pl',l:'Date de la visite (vide = annuler)',t:'date',v:m.pl}],o=>{m.pl=o.pl})}
+ else if(a==='day'){const E=evs().filter(e=>e.k===v),O=DB.m.map(m=>({m,i:info(m)})).sort((a,b)=>ORD.indexOf(a.i.s)-ORD.indexOf(b.i.s)||a.m.c.localeCompare(b.m.c)).map(({m,i})=>[String(m.id),m.c+' – '+(m.mo||m.g)+' ('+i.s+')']);
+  ask('Jour : '+fmt(v),[{k:'id',l:'Planifier une visite pour…',t:'sel',o:[['','— ne rien planifier —'],...O],v:''}],o=>{if(o.id){const m=DB.m.find(x=>x.id==o.id);m.pl=v}},E.length?'<div class="mu" style="margin:6px 0">Déjà ce jour :<br>'+E.map(e=>'• '+esc(e.m.c)+' – '+esc(e.m.mo||e.m.g)+(e.pl?' (visite)':' (échéance)')).join('<br>')+'</div>':'<div class="mu">Rien de prévu ce jour.</div>',1)}
+ else if(a==='calP'){S.cal.m--;if(S.cal.m<0){S.cal.m=11;S.cal.y--}render()}else if(a==='calN'){S.cal.m++;if(S.cal.m>11){S.cal.m=0;S.cal.y++}render()}else if(a==='calT'){S.cal={y:today().getFullYear(),m:today().getMonth()};render()}
+ else if(a==='relance'){const c=cli(v),l=mach(v).filter(m=>['En retard','À prévoir','Date à vérifier'].includes(info(m).s)),L=l.length?l:mach(v);c.rel=iso(today());save();render();location.href='mailto:'+(c.e||'')+'?subject='+encodeURIComponent(DB.tpl.s)+'&body='+encodeURIComponent(TPLV(c,L))}
+ else if(a==='print')print();else if(a==='fiche')fiche(v);else if(a==='rapport'){const[i,x]=v.split(':');rapport(i,+x)}
+ else if(a==='addDoc')ask('Nouveau document',[{k:'t',l:'Titre',r:1},{k:'c',l:'Classement',t:'sel',o:CATS,v:'Devis'},{k:'u',l:'Lien (adresse web ou chemin du fichier)',r:1}],o=>{cli(v).docs.push({t:o.t,c:o.c,u:o.u,d:iso(today())})});
+ else if(a==='delDoc'){const[n,i]=v.split('|');snap();cli(n).docs.splice(+i,1);save();render();toast('Document retiré',1)}
+ else if(a==='undo'){if(U){DB=mig(JSON.parse(U));U=null;save();render();toast('Action annulée')}}
+ else if(a==='clean'){if(!ADM)return toast('Réservé à l’administrateur');const n=DB.c.filter(c=>!mach(c.n).length).length;if(!n)toast('Aucun client sans machine');else if(confirm('Supprimer '+n+' client(s) sans machine ?')){snap();DB.c=DB.c.filter(c=>mach(c.n).length);save();render();toast(n+' client(s) supprimé(s)',1)}}
+ else if(a==='data')admAsk();else if(a==='anAdd')anAdd(v);else if(a==='reload')location.href=location.pathname+'?v='+Date.now();
+ else if(a==='geoAll')geoAll();else if(a==='loc'){navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{const M=MAPS[0];if(M){M.setView([p.coords.latitude,p.coords.longitude],11);L.circleMarker([p.coords.latitude,p.coords.longitude],{radius:8}).addTo(M).bindTooltip('Vous êtes ici')}},()=>toast('Position refusée ou indisponible')):toast('Position indisponible')}
+ else if(a==='sort'){const k=+v;S.ts=S.ts.k===k?{k,d:-S.ts.d}:{k,d:1};render()}
+ else if(a==='chk'){const id=+v;S.chk.has(id)?S.chk.delete(id):S.chk.add(id);render()}
+ else if(a==='chkAll'){const R=window.__R||[];const all=R.every(r=>S.chk.has(r.m.id));R.forEach(r=>all?S.chk.delete(r.m.id):S.chk.add(r.m.id));render()}
+ else if(a==='tourSel'){const ids=new Set([...S.chk].map(i=>(DB.m.find(m=>m.id===i)||{}).c).filter(Boolean));if(!ids.size){toast('Cochez d’abord des lignes du tableau');return}ids.forEach(n=>{if(!DB.tour.ids.includes(n))DB.tour.ids.push(n)});S.chk.clear();tourOpt();save();S.mode='r';render()}
+ else if(a==='tourAdd'){if(!DB.tour.ids.includes(v))DB.tour.ids.push(v);tourOpt();save();render();toast(v+' ajouté à la tournée')}
+ else if(a==='tourDel'){DB.tour.ids.splice(+v,1);save();render()}else if(a==='tourUp'||a==='tourDn'){const i=+v,j=a==='tourUp'?i-1:i+1,t=DB.tour.ids;if(j>=0&&j<t.length){[t[i],t[j]]=[t[j],t[i]];save();render()}}
+ else if(a==='tourClear'){DB.tour.ids=[];save();render()}else if(a==='tourOpt'){tourOpt();save();render()}else if(a==='tourAuto')tourAuto();else if(a==='tourPlan')tourPlan();else if(a==='tourSheet')sheet();
+ else if(a==='tourPl'){const k=DB.tour.date,s=new Set(DB.m.filter(m=>m.pl===k).map(m=>m.c));if(!s.size)toast('Aucune visite planifiée le '+fmt(k));else{s.forEach(n=>{if(!DB.tour.ids.includes(n))DB.tour.ids.push(n)});tourOpt();save();render()}}
+ else if(a==='depGo'){setDep($('#dep').value)}
+ else if(a==='ics')exportICS();else if(a==='exV')exportV();}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b||b.disabled)return;if(b.tagName!=='INPUT'||b.type!=='checkbox')e.stopPropagation();act(b.dataset.a,b.dataset.v)});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('row'))e.target.click()});
+document.addEventListener('change',e=>{const t=e.target;if(t.id==='tadd'&&t.value){DB.tour.ids.push(t.value);tourOpt();save();render()}else if(t.id==='tdate'){DB.tour.date=t.value||iso(today());save();render()}else if(t.id==='tback'){DB.tour.back=t.checked;tourOpt();save();render()}else if(t.id==='tn'){DB.tour.n=+t.value||6;save()}else if(t.id==='tr'){DB.tour.r=+t.value||100;save()}});
+let qt;$('#q').oninput=e=>{S.q=e.target.value;clearTimeout(qt);qt=setTimeout(render,['k','p'].includes(S.mode)?250:0)};
+$('#gf').onchange=e=>{S.g=e.target.value;render()};$('#vf').onchange=e=>{S.v=e.target.value;render()};$('#so').onchange=e=>{S.o=e.target.value;render()};
+function theme(){let t='auto';try{t=localStorage.getItem(TK)||'auto'}catch(e){}if(t==='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',t)}
+/* ---------- fichier partagé (Chrome / Edge) ---------- */
+const idb=f=>new Promise((res,rej)=>{const r=indexedDB.open('sav_bowman',1);r.onupgradeneeded=()=>r.result.createObjectStore('k');r.onsuccess=()=>{const tx=r.result.transaction('k','readwrite'),q=f(tx.objectStore('k'));tx.oncomplete=()=>res(q&&q.result);tx.onerror=()=>rej(tx.error)};r.onerror=()=>rej(r.error)});
+async function fhInit(){try{FH=await idb(s=>s.get('fh'))||null;if(FH&&await FH.queryPermission({mode:'readwrite'})!=='granted')FHS='perm';else if(FH)FLM=(await FH.getFile()).lastModified}catch(e){FH=null}}
+async function fhWrite(force){if(!FH)return;try{if(await FH.queryPermission({mode:'readwrite'})!=='granted'){FHS='perm';return}const f=await FH.getFile();if(!force&&FLM&&f.lastModified>FLM+1500){FHS='conflict';toast('Le fichier partagé a été modifié par quelqu’un d’autre : voir Admin');return}const w=await FH.createWritable();await w.write(JSON.stringify(DB));await w.close();FLM=(await FH.getFile()).lastModified;FHS='ok'}catch(e){FHS='err'}}
+async function fhLink(open){try{const h=open?(await showOpenFilePicker({types:[{description:'Base SAV',accept:{'application/json':['.json']}}]}))[0]:await showSaveFilePicker({suggestedName:'base_sav_partagee.json',types:[{description:'Base SAV',accept:{'application/json':['.json']}}]});if(open){await h.requestPermission({mode:'readwrite'});const d=JSON.parse(await(await h.getFile()).text());if(!d.m||!d.c)throw 0;snap();DB=mig(d);FH=h;FLM=(await h.getFile()).lastModified;save();toast('Fichier lié et chargé')}else{FH=h;FLM=0;await fhWrite(1);toast('Fichier créé et lié')}await idb(s=>s.put(h,'fh'));FHS='ok';render();openData()}catch(e){if(e&&e.name!=='AbortError')toast('Lien avec le fichier impossible')}}
+async function fhReload(){try{if(await FH.requestPermission({mode:'readwrite'})!=='granted')return;const f=await FH.getFile(),d=JSON.parse(await f.text());snap();DB=mig(d);FLM=f.lastModified;FHS='ok';save();render();toast('Données rechargées depuis le fichier',1);openData()}catch(e){toast('Lecture du fichier impossible')}}
+window.addEventListener('focus',async()=>{if(FH&&FHS==='ok'){try{if((await FH.getFile()).lastModified>FLM+1500)toast('Le fichier partagé a changé : Admin → Recharger')}catch(e){}}});
+/* ---------- Admin ---------- */
+function anomalies(){const A=[],cn={},sn={};DB.c.forEach(c=>{(cn[norm(c.n)]=cn[norm(c.n)]||[]).push(c.n)});Object.values(cn).filter(x=>x.length>1).forEach(x=>A.push('Client en double : '+x.join(' / ')));
+ DB.m.forEach(m=>{if(!cli(m.c))A.push('Machine sans client connu : '+m.c+' ('+(m.mo||m.g)+')');if(m.sn&&m.sn!=='/')(sn[m.sn]=sn[m.sn]||[]).push(m.c);['c','g','mo','rf','sn','no','dv','p'].forEach(k=>{if(String(m[k]).trim()==='/')A.push('Valeur « / » à vérifier : '+m.c+' ('+k+')')})});
+ Object.entries(sn).filter(([k,v])=>v.length>1).forEach(([k,v])=>A.push('N° de série en double '+k+' : '+v.join(' / ')));
+ DB.c.forEach(c=>['ct','t','e','v','no'].forEach(k=>{if(String(c[k]).trim()==='/')A.push('Valeur « / » à vérifier : '+c.n+' ('+k+')')}));
+ const s=DB.c.filter(c=>!mach(c.n).length).length;if(s)A.push(s+' client(s) sans machine (bouton « Supprimer les clients sans machine »)');return A}
+function openData(){if(!ADM)return admAsk();const f=$('#f'),A=anomalies(),fsa='showSaveFilePicker' in window;$('#dlg').className='W';
+ f.innerHTML=`<h3>Admin <small class="mu">v${APP_V}</small></h3><p class="mu">Les exports ci-dessous donnent une copie de secours hors Google Sheets.</p>
+ <div class="bt" style="justify-content:flex-start"><button class="pr" type="button" id="bx">Exporter vers Excel</button><button type="button" id="bj">Sauvegarde (.json)</button><button type="button" id="bi">Restaurer / importer</button><button type="button" id="bm" class="pr">Corriger depuis Excel (fusion)</button><input id="fm" type="file" accept=".xlsx" hidden><button type="button" id="bc">Calendrier (.ics)</button><button type="button" id="bk">Supprimer les clients sans machine</button><button type="button" id="bz" class="dg">Vider tous les clients</button></div><input id="fi" type="file" accept=".xlsx,.xls,.json" hidden>
+ <details open><summary>Réglages</summary><label>Nom de l’entreprise<input id="s0" value="${esc(DB.co)}"></label><label>Alerte « À prévoir » (jours avant l’échéance)<input id="s1" type="number" min="0" value="${DB.seuil}"></label><label>Périodicité par défaut (mois)<input id="s2" type="number" min="1" value="${DB.per}"></label><label>Technicien par défaut<input id="s3" value="${esc(DB.tech||'')}"></label>
+ <label>Adresse de départ des tournées<input id="s4" value="${esc(DB.dep.a)}" placeholder="Rue, code postal, ville"></label><div class="mu">${DB.dep.lat!=null?'Adresse localisée sur la carte ✔':'Pas encore localisée (enregistrée à la validation du champ)'}</div></details>
+ <details><summary>Gammes (${DB.gammes.length})</summary><div class="g">${DB.gammes.map((g,i)=>`<button type="button" data-a="gdel" data-v="${i}" title="Retirer">${esc(g)} ✕</button>`).join('')}</div><label>Ajouter une gamme<input id="ga" placeholder="Nom puis Entrée"></label></details>
+ <details><summary>Modèle d’e-mail de relance</summary><label>Objet<input id="t1" value="${esc(DB.tpl.s)}"></label><label>Message (utilisez {client}, {contact}, {machines})<textarea id="t2" rows="8">${esc(DB.tpl.b)}</textarea></label></details>
+ <details ${A.length?'open':''}><summary>Contrôles automatiques (${A.length})</summary>${A.length?'<ul>'+A.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':'<p>Aucune anomalie 👍</p>'}</details>
+ <details open><summary>Base de données Google Sheets</summary><p class="mu">Vos données sont enregistrées dans votre Google Sheet (accessible depuis tous vos appareils). Chaque modification y est envoyée automatiquement ; une copie est gardée sur cet appareil pour travailler hors connexion.</p>
+ <p>État : <b>${({off:'non lié',ok:'à jour',sync:'synchronisation…',offline:'hors connexion',conflict:'conflit à résoudre',err:'erreur'})[CLD.st]||''}</b>${META.dirty?' · modifications à envoyer':''}${CLD.msg?' – '+esc(CLD.msg):''}</p>
+ ${/^https:\/\//.test(API_URL||'')?'':`<label>Adresse de l’API (se termine par /exec)<input id="au" value="${esc(API)}" placeholder="https://script.google.com/macros/s/…/exec"></label>`}
+ <div class="bt" style="justify-content:flex-start"><button type="button" class="pr" id="c1">Synchroniser maintenant</button><button type="button" id="c2">Recharger depuis le Sheet</button><button type="button" id="c3">Écraser le Sheet avec mes données</button><button type="button" id="c5">Sauvegarde Drive du Sheet</button><button type="button" id="c4" class="dg">Verrouiller le site</button></div></details>
+ <div class="bt"><button type="button" data-a="x">Fermer</button></div>`;
+ f.onsubmit=e=>e.preventDefault();const bind=(i,fn)=>{const e=$('#'+i);if(e)e.onchange=fn};
+ bind('s0',e=>{DB.co=e.target.value.trim()||'Bowman';save();render()});bind('s1',e=>{DB.seuil=+e.target.value||30;save();render()});bind('s2',e=>{DB.per=+e.target.value||12;save();render()});bind('s3',e=>{DB.tech=e.target.value.trim();save()});bind('s4',e=>setDep(e.target.value).then(openData));
+ $('#ga').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();const v=e.target.value.trim();if(v&&!DB.gammes.includes(v)){DB.gammes.push(v);save();openData()}}};
+ bind('t1',e=>{DB.tpl.s=e.target.value;save()});bind('t2',e=>{DB.tpl.b=e.target.value;save()});
+ $('#bx').onclick=exportX;$('#bj').onclick=exportJ;$('#bi').onclick=()=>$('#fi').click();$('#bc').onclick=exportICS;$('#bk').onclick=()=>act('clean');$('#bz').onclick=async()=>{if(!confirm('Effacer TOUS les clients et machines ? Le Sheet est d’abord archivé (onglets « Annuaire ») et sauvegardé sur Drive : vous pourrez toujours les retrouver en tapant leur nom.')||!confirm('Dernière confirmation : tout vider ?'))return;toast('Archivage et sauvegarde…');try{const r=await api('annuaire',{freeze:1});if(!r.ok)throw new Error(r.error==='action'?'Code.gs pas à jour (voir MAJ_Code.gs)':r.error||'archivage impossible');await api('backup');snap();DB.c=[];DB.m=[];DB.tour.ids=[];S.sel=null;$('#dlg').close();CLD.loaded=true;META.dirty=true;metaSave();saveLocal();await cloudPush(true);await anLoad();render();toast('Base vidée')}catch(e){toast('Rien n’a été effacé : '+(e.message||errTxt(e)))}};$('#fi').onchange=importF;$('#bm').onclick=()=>$('#fm').click();$('#fm').onchange=mergeF;
+ const on=(i,fn)=>{const e=$('#'+i);if(e)e.onclick=fn};
+ bind('au',e=>{API=e.target.value.trim();try{localStorage.setItem(AK,API)}catch(x){}CLD.loaded=false;CLD.st=API?'sync':'off';cloudChip();if(API)cloudLoad().then(openData)});
+ on('c1',()=>{META.dirty?cloudPush():cloudLoad(false);toast('Synchronisation lancée')});
+ on('c2',()=>{if(confirm('Remplacer les données de cet appareil par celles du Google Sheet ?')){$('#dlg').close();cloudLoad(false,true)}});
+ on('c3',()=>{if(confirm('Écraser le Google Sheet avec les données de cet appareil ?')){META.dirty=true;metaSave();$('#dlg').close();cloudPush(true)}});on('c4',lockNow);on('c5',async()=>{toast('Copie en cours…');try{const r=await api('backup');toast(r.ok?'Copie créée : '+r.nom:'Échec : '+(r.error||'erreur'))}catch(e){toast(errTxt(e))}});
+ $('#dlg').showModal()}
+/* ---------- exports / imports ---------- */
+function dl(b,n){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+function exportJ(){dl(new Blob([JSON.stringify(DB)],{type:'application/json'}),'sauvegarde_sav_'+iso(today())+'.json');DB.bk=iso(today());save();render();toast('Sauvegarde téléchargée')}
+function exportICS(){const t0=iso(today()),z=s=>s.replace(/-/g,''),x=s=>String(s).replace(/[,;\n]/g,' '),ev=[];DB.m.forEach(m=>{const i=info(m),pl=m.pl>=t0,k=pl?m.pl:i.n;if(!k||(!pl&&i.j>365))return;const c=cli(m.c)||{};ev.push(['BEGIN:VEVENT','UID:sav'+m.id+'@bowman','DTSTAMP:'+z(t0)+'T080000Z','DTSTART;VALUE=DATE:'+z(k<t0?t0:k),'SUMMARY:'+x((pl?'Visite':'Maintenance')+' – '+m.c+' – '+(m.mo||m.g)),'LOCATION:'+x(addr(c)),'DESCRIPTION:'+x((m.sn?'N° '+m.sn+' · ':'')+i.s),'END:VEVENT'].join('\r\n'))});dl(new Blob(['BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//SAV Bowman//FR\r\n'+ev.join('\r\n')+'\r\nEND:VCALENDAR'],{type:'text/calendar'}),'maintenances.ics');toast(ev.length+' événements exportés')}
+function fixD(ws){Object.keys(ws).forEach(k=>{if(k[0]!=='!'&&ws[k].t==='d')ws[k].z='dd/mm/yyyy'});return ws}
+function exportX(){if(typeof XLSX==='undefined')return toast('Export Excel indisponible hors connexion : utilisez la sauvegarde .json');
+ const dt=s=>s?pd(s):'',wb=XLSX.utils.book_new(),sh=(a,n)=>XLSX.utils.book_append_sheet(wb,fixD(XLSX.utils.aoa_to_sheet(a,{cellDates:true})),n);
+ sh([['Client','Contact','Téléphone','E-mail','Ville','Notes SAV','Adresse','Code postal'],...DB.c.map(c=>[c.n,c.ct,c.t,c.e,c.v,c.no,c.ad,c.cp])],'Clients');
+ sh([['Client','Gamme','Modèle','Référence','N° de série','Qté','Dernière maintenance','Périodicité (mois)','Date confirmée ?','Notes machine','Lien devis (coller l’URL)','Type de suivi','Fin de garantie','Visite planifiée','Prochaine maintenance','Statut'],...DB.m.map(m=>{const i=info(m);return[m.c,m.g,m.mo,m.rf,m.sn,m.q,dt(m.d),m.p,m.cf,m.no,m.dv,m.ct,dt(m.ga),dt(m.pl),dt(i.n),i.s]})],'Machines');
+ sh([['Paramètre','Valeur'],['Seuil d’alerte (jours avant échéance)',DB.seuil],['Périodicité par défaut (mois)',DB.per],['Gammes',DB.gammes.join(', ')]],'Paramètres');
+ const H=[];DB.m.forEach(m=>m.h.forEach(x=>H.push([m.c,ml(m),m.sn,dt(x.d),x.ty,x.te,x.n])));sh([['Client','Machine','N° de série','Date','Type','Technicien','Note'],...H],'Interventions');
+ XLSX.writeFile(wb,'Suivi_SAV_'+iso(today())+'.xlsx',{cellDates:true});DB.bk=iso(today());save();toast('Fichier Excel exporté')}
+function exportV(){if(typeof XLSX==='undefined')return toast('Export Excel indisponible hors connexion');const R=window.__R||[],wb=XLSX.utils.book_new(),dt=s=>s?pd(s):'';XLSX.utils.book_append_sheet(wb,fixD(XLSX.utils.aoa_to_sheet([TC,...R.map(r=>[r.m.c,r.c.v||'',r.m.g,ml(r.m),r.m.sn,r.m.q,dt(r.m.d),dt(r.i.n),r.i.s])],{cellDates:true})),'Maintenances');XLSX.writeFile(wb,'Maintenances_'+iso(today())+'.xlsx',{cellDates:true})}
+function findC(n){const k=norm(n);let c=DB.c.find(x=>norm(x.n)===k);if(c)return[c,0];if(k.length>=8){const L=DB.c.filter(x=>{const j=norm(x.n);return j.length>=8&&(j.includes(k)||k.includes(j))});if(L.length===1)return[L[0],1]}return[null,0]}
+function mergeF(e){const f=e.target.files[0];e.target.value='';if(!f)return;if(typeof XLSX==='undefined')return toast('Import Excel indisponible hors connexion');const r=new FileReader();
+ r.onload=()=>{try{const wb=XLSX.read(r.result),s=v=>String(v??'').trim(),rows=n=>{if(!wb.Sheets[n])return[];const a=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:'',raw:false}),h=a.findIndex(x=>x[0]==='Client');return h<0?[]:a.slice(h+1).map(x=>{const o={};a[h].forEach((k,j)=>o[k]=s(x[j]));return o}).filter(o=>o.Client)};
+  const RC=rows('Clients'),RM=rows('Machines'),RI=rows('Interventions');if(!RC.length&&!RM.length)return toast('Fichier de corrections non reconnu (onglets Clients / Machines)');
+  if(!confirm('Fusionner '+RC.length+' clients, '+RM.length+' machines et '+RI.length+' interventions avec vos données ?\nRien n’est supprimé : les contacts sont corrigés, les dates de dernière maintenance complétées. Vous pourrez annuler juste après.'))return;
+  snap();const K={cn:0,cu:0,mn:0,mu:0,i:0,sk:0,fz:0},MK='— Contacts (Excel) —';
+  RC.forEach(o=>{let[c,z]=findC(o.Client);K.fz+=z;if(!c){if(o['Créer si absent']!=='oui')return;c=mkC({n:o.Client});DB.c.push(c);K.cn++}else K.cu++;
+   ['Contact:ct','Téléphone:t','E-mail:e'].forEach(p=>{const[a,b]=p.split(':');if(o[a])c[b]=o[a]});
+   [['Ville','v'],['Code postal','cp'],['Adresse','ad']].forEach(([a,b])=>{if(o[a]&&!c[b])c[b]=o[a]});
+   if(o['Notes SAV']){const i=(c.no||'').indexOf(MK);c.no=((i<0?c.no||'':c.no.slice(0,i)).trim()+'\n'+o['Notes SAV']).trim()}});
+  RM.forEach(o=>{const[c]=findC(o.Client);if(!c)return;const sn=o['N° de série'];let m=sn?DB.m.find(x=>x.sn===sn):DB.m.find(x=>x.c===c.n&&!x.sn&&x.mo===o['Modèle']);
+   if(m){K.mu++;[['Gamme','g'],['Modèle','mo'],['Référence','rf'],['Type de suivi','ct']].forEach(([a,b])=>{if(o[a]&&!m[b])m[b]=o[a]});if(o['Dernière maintenance']&&(!m.d||o['Dernière maintenance']>m.d)){m.d=o['Dernière maintenance'];m.cf=o['Date confirmée ?']||'Oui'}if(o['Notes machine']&&!(m.no||'').includes(o['Notes machine']))m.no=((m.no||'')+' '+o['Notes machine']).trim()}
+   else{K.mn++;DB.m.push({id:Math.max(0,...DB.m.map(x=>x.id))+1,c:c.n,g:o.Gamme||'À préciser',mo:o['Modèle'],rf:o['Référence'],sn,q:1,d:o['Dernière maintenance'],p:'',cf:o['Date confirmée ?']||'',no:o['Notes machine'],dv:'',ct:o['Type de suivi'],ga:'',pl:'',h:[]})}});
+  RI.forEach(o=>{const[c]=findC(o.Client);if(!c||!o.Date)return;let m=o['N° de série']?DB.m.find(x=>x.sn===o['N° de série']):null;if(!m){const l=mach(c.n);if(l.length===1)m=l[0]}if(!m){K.sk++;return}
+   if(m.h.some(x=>x.d===o.Date&&x.ty===o.Type))return;m.h.push({d:o.Date,ty:o.Type,te:o.Technicien,n:o.Note});m.h.sort((a,b)=>b.d.localeCompare(a.d));K.i++;if(!m.d||o.Date>m.d){m.d=o.Date;m.cf='Oui'}});
+  save();$('#dlg').close();render();toast(K.cu+' client(s) corrigé(s), '+K.cn+' ajouté(s) · '+K.mu+' machine(s) mises à jour, '+K.mn+' ajoutée(s) · '+K.i+' intervention(s)'+(K.sk?' · '+K.sk+' à rattacher à la main':'')+(K.fz?' · '+K.fz+' nom(s) rapproché(s) approximativement':''),1)
+ }catch(x){toast('Fichier de corrections illisible')}};r.readAsArrayBuffer(f)}
+function importF(e){const f=e.target.files[0];if(!f)return;const r=new FileReader(),ok=d=>{if(confirm('Remplacer toutes les données actuelles par ce fichier ('+d.c.length+' clients, '+d.m.length+' machines) ?')){snap();DB=mig(d);DB.v3=1;S.sel=null;save();$('#dlg').close();render();toast('Données importées',1)}};
+ if(/\.json$/i.test(f.name)){r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.c||!d.m)throw 0;ok(d)}catch(x){toast('Fichier illisible')}};r.readAsText(f)}
+ else{if(typeof XLSX==='undefined')return toast('Import Excel indisponible hors connexion');r.onload=()=>{try{
+  const wb=XLSX.read(r.result,{cellDates:true}),rows=n=>{if(!wb.Sheets[n])return[];const a=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:'',raw:true}),h=a.findIndex(x=>x[0]==='Client');return h<0?[]:a.slice(h+1).map(x=>{const o={};a[h].forEach((k,j)=>o[k]=x[j]);return o}).filter(o=>String(o.Client).trim()&&!String(o.Client).startsWith('='))};
+  const s=v=>String(v??'').trim(),dd=v=>{if(v instanceof Date){const t=new Date(v.getTime()+432e5);return t.getUTCFullYear()+'-'+String(t.getUTCMonth()+1).padStart(2,'0')+'-'+String(t.getUTCDate()).padStart(2,'0')}const x=s(v).match(/^(\d{4}-\d\d-\d\d)|^(\d\d)\/(\d\d)\/(\d{4})/);return x?x[1]||x[4]+'-'+x[3]+'-'+x[2]:''};
+  let seuil=DB.seuil,per=DB.per;if(wb.Sheets['Paramètres']){XLSX.utils.sheet_to_json(wb.Sheets['Paramètres'],{header:1,defval:''}).forEach(x=>{const k=s(x[0]).toLowerCase();if(k.startsWith('seuil')&&+x[1])seuil=+x[1];if(k.startsWith('périodicité')&&+x[1])per=+x[1]})}
+  const d={seuil,per,gammes:DB.gammes,c:rows('Clients').map(o=>mkC({n:s(o.Client),ct:s(o.Contact),t:s(o['Téléphone']),e:s(o['E-mail']),v:s(o.Ville),no:s(o['Notes SAV']),ad:s(o.Adresse),cp:s(o['Code postal'])})),m:rows('Machines').map((o,i)=>({id:i+1,c:s(o.Client),g:s(o.Gamme),mo:s(o['Modèle']),rf:s(o['Référence']),sn:s(o['N° de série']),q:+o['Qté']||1,d:dd(o['Dernière maintenance']),p:s(o['Périodicité (mois)']),cf:s(o['Date confirmée ?']),no:s(o['Notes machine']),dv:s(o['Lien devis (coller l’URL)']),ct:s(o['Type de suivi']),ga:dd(o['Fin de garantie']),pl:dd(o['Visite planifiée']),h:[]}))};
+  rows('Interventions').forEach(o=>{const m=d.m.find(x=>x.c===s(o.Client)&&x.sn===s(o['N° de série'])&&ml(x)===s(o['Machine']))||d.m.find(x=>x.c===s(o.Client));if(m)m.h.push({d:dd(o.Date),ty:s(o.Type),te:s(o.Technicien),n:s(o.Note)})});
+  d.m.forEach(m=>m.h.sort((a,b)=>b.d.localeCompare(a.d)));d.tour=DB.tour;d.dep=DB.dep;d.tpl=DB.tpl;d.co=DB.co;d.tech=DB.tech;
+  d.c.forEach(c=>{const o=cli(c.n);if(o){c.lat=o.lat;c.lng=o.lng;c.lq=o.lq;c.docs=o.docs;c.rel=o.rel}});ok(d)}catch(x){toast('Fichier Excel illisible')}};r.readAsArrayBuffer(f)}}
+/* ---------- Mot de passe + Google Sheets = base de données ---------- */
+const PH='38a2f6ab8cedac46cc17979d47f90bcbc40951f44f7ed13cfffdac3517ed2fe9';/* empreinte SHA-256 du mot de passe (le mot de passe lui-même n'est pas dans le fichier) */
+const PK='sav_bowman_pw',AK='sav_bowman_api',MK='sav_bowman_meta';
+let API=/^https:\/\//.test(API_URL||'')?API_URL.trim():'';try{API=API||localStorage.getItem(AK)||''}catch(e){}
+let PWD='',CLD={st:API?'sync':'off',busy:false,loaded:false,msg:''};
+let META={};try{META=JSON.parse(localStorage.getItem(MK))||{}}catch(e){}
+const metaSave=()=>{try{localStorage.setItem(MK,JSON.stringify(META))}catch(e){}};
+function sha256js(str){const b=Array.from(new TextEncoder().encode(str)),K=[],H=[];let n=0;
+ for(let c=2;n<64;c++){let p=true;for(let d=2;d*d<=c;d++)if(c%d===0){p=false;break}if(p){if(n<8)H[n]=Math.floor((Math.sqrt(c)%1)*4294967296);K[n]=Math.floor((Math.cbrt(c)%1)*4294967296);n++}}
+ const L=b.length*8;b.push(0x80);while(b.length%64!==56)b.push(0);const hi=Math.floor(L/4294967296),lo=L>>>0;[hi,lo].forEach(x=>b.push(x>>>24&255,x>>>16&255,x>>>8&255,x&255));
+ const R=(v,a)=>(v>>>a)|(v<<(32-a));
+ for(let o=0;o<b.length;o+=64){const w=[];for(let i=0;i<16;i++)w[i]=(b[o+4*i]<<24|b[o+4*i+1]<<16|b[o+4*i+2]<<8|b[o+4*i+3])>>>0;
+  for(let i=16;i<64;i++){const s0=R(w[i-15],7)^R(w[i-15],18)^(w[i-15]>>>3),s1=R(w[i-2],17)^R(w[i-2],19)^(w[i-2]>>>10);w[i]=(w[i-16]+s0+w[i-7]+s1)>>>0}
+  let[a,b2,c,d,e,f,g,h]=H;
+  for(let i=0;i<64;i++){const S1=R(e,6)^R(e,11)^R(e,25),ch=(e&f)^(~e&g),t1=(h+S1+ch+K[i]+w[i])>>>0,S0=R(a,2)^R(a,13)^R(a,22),mj=(a&b2)^(a&c)^(b2&c),t2=(S0+mj)>>>0;h=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=b2;b2=a;a=(t1+t2)>>>0}
+  [a,b2,c,d,e,f,g,h].forEach((v,i)=>H[i]=(H[i]+v)>>>0)}
+ return H.map(x=>x.toString(16).padStart(8,'0')).join('')}
+async function sha(s){try{if(window.crypto&&crypto.subtle){const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,'0')).join('')}}catch(e){}return sha256js(s)}
+async function api(action,extra){if(!API)throw new Error('API');const ac=new AbortController(),to=setTimeout(()=>ac.abort(),45000);
+ try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,pwd:PWD,adm:ADMPWD,...extra}),signal:ac.signal});const t=await r.text();let j;try{j=JSON.parse(t)}catch(e){throw new Error('FORMAT')}return j}finally{clearTimeout(to)}}
+const errTxt=e=>e&&e.message==='FORMAT'?'Réponse inattendue : le déploiement doit être « Tout le monde » (voir le guide)':e&&e.name==='AbortError'?'Délai dépassé':'Pas de connexion';
+/* conversions base du site <-> Google Sheet */
+const toCloud=()=>({clients:DB.c.map(c=>({n:c.n,ct:c.ct,t:c.t,e:c.e,v:c.v,no:c.no,ad:c.ad,cp:c.cp,lat:c.lat,lng:c.lng,x:{lq:c.lq,docs:c.docs,rel:c.rel,vg:c.vg}})),
+ machines:DB.m.map(m=>({c:m.c,g:m.g,mo:m.mo,rf:m.rf,sn:m.sn,q:m.q,d:m.d,p:m.p,cf:m.cf,no:m.no,dv:m.dv,ct:m.ct,ga:m.ga,pl:m.pl})),
+ interventions:DB.m.flatMap(m=>m.h.map(x=>({c:m.c,m:ml(m),sn:m.sn,d:x.d,ty:x.ty,te:x.te,n:x.n}))),
+ params:{seuil:DB.seuil,per:DB.per,gammes:DB.gammes},
+ config:{tour:DB.tour,dep:DB.dep,tpl:DB.tpl,co:DB.co,tech:DB.tech,types:DB.types}});
+function fromCloud(D){const x=D.config||{},P=D.params||{};
+ const d={seuil:P.seuil,per:P.per,v3:1,c:(D.clients||[]).map(c=>{const X=c.x||{};return mkC({n:c.n,ct:c.ct,t:c.t,e:c.e,v:c.v,no:c.no,ad:c.ad,cp:c.cp,lat:c.lat,lng:c.lng,lq:X.lq||'',docs:X.docs||[],rel:X.rel||'',vg:X.vg})}),
+  m:(D.machines||[]).map((r,i)=>({id:i+1,c:r.c,g:r.g,mo:r.mo,rf:r.rf,sn:r.sn,q:r.q,d:r.d,p:r.p,cf:r.cf,no:r.no,dv:r.dv,ct:r.ct,ga:r.ga,pl:r.pl,h:[]}))};
+ if(P.gammes&&P.gammes.length)d.gammes=P.gammes.slice();
+ ['tour','dep','tpl','co','tech','types'].forEach(k=>{if(x[k]!==undefined&&x[k]!==null)d[k]=x[k]});
+ (D.interventions||[]).forEach(o=>{const m=d.m.find(z=>z.c===o.c&&z.sn===o.sn&&ml(z)===o.m)||d.m.find(z=>z.c===o.c);if(m)m.h.push({d:o.d,ty:o.ty,te:o.te,n:o.n})});
+ d.m.forEach(m=>m.h.sort((a,b)=>b.d.localeCompare(a.d)));return mig(d)}
+function adopt(data,hash){DB=fromCloud(data);META.hash=hash;META.dirty=false;metaSave();saveLocal();baseSave(toCloud());CLD.msg=''}
+/* fusion à 3 voies : base (dernier état commun) / mes changements / Sheet. Plus de conflit à trancher à la main. */
+let BASE=null,CR=0;try{BASE=JSON.parse(localStorage.getItem('sav_bowman_base'))}catch(e){}
+const baseSave=d=>{BASE=d;try{localStorage.setItem('sav_bowman_base',JSON.stringify(d))}catch(e){}};
+const norC=d=>{const k=DB;try{DB=fromCloud(d);return toCloud()}finally{DB=k}};
+function mergeCloud(B,A,Rm){const J=JSON.stringify,kd=(arr,kf)=>{const m=new Map(),n={};(arr||[]).forEach(o=>{let k=kf(o);n[k]=(n[k]||0)+1;if(n[k]>1)k+='#'+n[k];m.set(k,o)});return m},
+ mg=(b,a,r,kf)=>{const mb=kd(b,kf),ma=kd(a,kf),mr=kd(r,kf),out=[];new Set([...ma.keys(),...mr.keys(),...mb.keys()]).forEach(k=>{const x=mb.get(k),l=ma.get(k),y=mr.get(k),v=J(l)!==J(x)?l:y;if(v)out.push(v)});return out},
+ pk=(a,b,r)=>J(a)!==J(b)?a:r;B=B||{};
+ return{clients:mg(B.clients,A.clients,Rm.clients,o=>norm(o.n)),machines:mg(B.machines,A.machines,Rm.machines,o=>[norm(o.c),o.sn,o.mo,o.rf].join('|')),interventions:mg(B.interventions,A.interventions,Rm.interventions,o=>[o.c,o.m,o.sn,o.d,o.ty,o.te,o.n].join('|')),params:pk(A.params,B.params,Rm.params),config:pk(A.config,B.config,Rm.config)}}
+function reconcile(D,h){const M=mergeCloud(BASE,toCloud(),norC(D));DB=fromCloud(M);META.hash=h;META.dirty=true;metaSave();saveLocal();render()}
+/* pastille d'état dans l'en-tête */
+function cloudChip(){const e=$('#cs');if(!e)return;const L={off:['☁ non lié',''],ok:['☁ à jour',''],sync:['☁ envoi…',''],offline:['⚠ hors ligne','dg'],conflict:['⚠ conflit','dg'],err:['⚠ erreur','dg']},[t,c]=L[CLD.st]||L.off;
+ e.textContent=t+(META.dirty&&CLD.st!=='sync'&&CLD.st!=='off'?' · à envoyer':'');e.className=c;e.title=CLD.msg||'Synchronisation avec Google Sheets'}
+/* enregistrement : copie locale immédiate + envoi au Google Sheet */
+let ft;
+function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){toast('Sauvegarde du navigateur impossible : exportez en Excel')}}
+function save(){saveLocal();if(!API)return;META.dirty=true;metaSave();cloudChip();clearTimeout(ft);ft=setTimeout(()=>cloudPush(),1500)}
+async function cloudPush(force){if(!API||!PWD||CLD.busy||!CLD.loaded)return;if(!META.dirty&&!force)return;if(CLD.st==='conflict'&&!force)return;
+ CLD.busy=true;CLD.st='sync';cloudChip();
+ try{const sent=JSON.stringify(DB),cd=toCloud(),r=await api('save',{base:META.hash||'',force:!!force,data:cd});
+  if(r.ok){CR=0;baseSave(cd);META.hash=r.hash;if(JSON.stringify(DB)===sent)META.dirty=false;metaSave();CLD.st='ok';CLD.msg='';if(META.dirty){clearTimeout(ft);ft=setTimeout(()=>cloudPush(),400)}}
+  else if(r.conflict){CLD.busy=false;if(BASE&&!force&&++CR<4){reconcile(r.data,r.hash);return cloudPush()}CR=0;CLD.st='conflict';CLD.msg='Le Google Sheet a été modifié ailleurs';cloudChip();conflictDlg(r.data,r.hash);return}
+  else{CLD.st='err';CLD.msg=r.error==='auth'?'Mot de passe refusé par le serveur Google (Code.gs)':r.error==='occupe'?'Serveur occupé, nouvel essai':(r.error||'Erreur serveur')}
+ }catch(e){CLD.st='offline';CLD.msg=errTxt(e)}
+ CLD.busy=false;cloudChip()}
+async function cloudLoad(quiet,force){if(!API||!PWD||CLD.busy)return;if(quiet&&CLD.st==='conflict')return;CLD.busy=true;if(!quiet){CLD.st='sync';cloudChip()}
+ try{const r=await api('load');
+  if(!r.ok){CLD.st='err';CLD.msg=r.error==='auth'?'Mot de passe refusé par le serveur Google (Code.gs)':(r.error||'Erreur serveur');CLD.busy=false;cloudChip();return}
+  CLD.loaded=true;
+  const localHas=DB.c.length||DB.m.length,remHas=(r.data.clients||[]).length||(r.data.machines||[]).length;
+  if(!BASE&&!META.dirty&&!force){if(localHas&&!remHas){CLD.st='conflict';CLD.msg='Cet appareil contient des données absentes du Sheet';CLD.busy=false;cloudChip();conflictDlg(r.data,r.hash);return}adopt(r.data,r.hash);CLD.st='ok';CLD.busy=false;render();cloudChip();return}
+  if(force){adopt(r.data,r.hash);CLD.st='ok';CLD.busy=false;render();cloudChip();return}
+  if(META.dirty&&META.hash!==r.hash){if(BASE){reconcile(r.data,r.hash);CLD.busy=false;await cloudPush();return}CLD.st='conflict';CLD.msg='Le Google Sheet et cet appareil ont chacun des changements';CLD.busy=false;cloudChip();conflictDlg(r.data,r.hash);return}
+  if(META.dirty){CLD.busy=false;await cloudPush();return}
+  if(r.hash!==META.hash){if(quiet&&$('#dlg').open){CLD.busy=false;return}adopt(r.data,r.hash);render();if(quiet)toast('Données mises à jour depuis Google Sheets')}
+  CLD.st='ok';CLD.msg=''
+ }catch(e){CLD.st='offline';CLD.msg=errTxt(e)}
+ CLD.busy=false;cloudChip()}
+function conflictDlg(D,h){const f=$('#f'),nc=(D.clients||[]).length,nm=(D.machines||[]).length;$('#dlg').className='';
+ f.innerHTML=`<h3>Deux versions différentes</h3><p>Le Google Sheet contient <b>${nc} clients et ${nm} machines</b>. Cet appareil a des modifications qui n’y sont pas encore.</p><p class="mu">Choisissez la version à conserver. L’autre sera remplacée.</p>
+ <div class="bt" style="justify-content:flex-start;flex-direction:column;align-items:stretch"><button type="button" class="pr" id="k1">Garder le Google Sheet (abandonner mes changements ici)</button><button type="button" id="k2">Garder mes changements (écraser le Google Sheet)</button><button type="button" id="k3">Décider plus tard</button></div>`;
+ f.onsubmit=e=>e.preventDefault();$('#k1').onclick=()=>{adopt(D,h);CLD.st='ok';$('#dlg').close();render();cloudChip();toast('Version du Google Sheet chargée')};
+ $('#k2').onclick=()=>{META.hash=h;META.dirty=true;metaSave();CLD.st='sync';$('#dlg').close();cloudPush(true)};$('#k3').onclick=()=>$('#dlg').close();
+ if(!$('#dlg').open)$('#dlg').showModal()}
+setInterval(()=>{if(API&&PWD&&CLD.loaded&&!CLD.busy&&CLD.st!=='conflict'){if(META.dirty)cloudPush();else if(!document.hidden)cloudLoad(true)}},20000);
+window.addEventListener('online',()=>{if(API&&PWD&&CLD.loaded)META.dirty?cloudPush():cloudLoad(true)});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&API&&PWD&&CLD.loaded&&!META.dirty)cloudLoad(true)});
+window.addEventListener('beforeunload',e=>{if(META.dirty&&API){e.preventDefault();e.returnValue=''}});
+/* verrouillage + démarrage */
+function lockNow(){try{sessionStorage.removeItem(PK);localStorage.removeItem(PK)}catch(e){}location.reload()}
+function start(pw){PWD=pw;document.body.classList.remove('lock','ask');render();cloudChip();if(!API){setTimeout(()=>{toast('Aucune base Google Sheets liée : renseignez l’adresse dans Admin');openData()},400)}else{cloudLoad();anLoad()}checkV()}
+async function boot(){let pw=null;try{pw=sessionStorage.getItem(PK)||localStorage.getItem(PK)}catch(e){}
+ if(pw&&await sha(pw)===PH)return start(pw);
+ document.body.classList.add('ask');$('#gp').focus()}
+let GADM=false,gt=[];
+$('#gf2').onsubmit=async e=>{e.preventDefault();const v=$('#gp').value,h=await sha(v);
+ if(GADM){if(Date.now()<admBlock){$('#ge').textContent='Trop d’essais, patientez 30 s';return}if(h===AH){admFail=0;admOn(v);start(v);toast('Mode administrateur activé (10 min)');return}if(++admFail>=3){admBlock=Date.now()+3e4;admFail=0}}
+ else if(h===PH){try{sessionStorage.setItem(PK,v);if($('#gr').checked)localStorage.setItem(PK,v)}catch(x){}start(v);return}
+ $('#ge').textContent='Mot de passe incorrect';$('#gp').value='';$('#gp').focus()};
+$('#glg').addEventListener('click',()=>{const n=Date.now();gt=gt.filter(t=>n-t<1200);gt.push(n);if(gt.length>=3){gt=[];GADM=!GADM;$('#gh').textContent=GADM?'Mode administrateur':'SAV Bowman';$('#gm').textContent=GADM?'Mot de passe administrateur':'Accès protégé';$('#gp').placeholder=GADM?'Mot de passe administrateur':'Mot de passe';$('#ge').textContent='';$('#gp').value='';$('#gp').focus()}});
+
+/* ---------- Mode administrateur caché : 3 appuis sur le titre ---------- */
+const AH='46b20f61832e447ac6f37e25e04c74a89610123977de78ae25be8bbf3f6b6c0f';/* empreinte SHA-256 */
+let ADM=false,ADMPWD='',ADMT=0,tp=[],admFail=0,admBlock=0;
+function admOff(){ADM=false;ADMPWD='';document.body.classList.remove('adm');render()}
+function admOn(p){ADM=true;ADMPWD=p;document.body.classList.add('adm');clearTimeout(ADMT);ADMT=setTimeout(admOff,6e5)}
+function admAsk(){if(ADM)return openData();const f=$('#f');$('#dlg').className='';
+ f.innerHTML='<h3>Mode administrateur</h3><label>Mot de passe<input id="ap" type="password" autocomplete="off"></label><div id="ae" class="warn" role="alert"></div><div class="bt"><button type="button" data-a="x">Annuler</button><button class="pr">Valider</button></div>';
+ f.onsubmit=async e=>{e.preventDefault();if(Date.now()<admBlock){$('#ae').textContent='Trop d’essais, patientez 30 s';return}const v=$('#ap').value;
+  if(await sha(v)===AH){admFail=0;admOn(v);$('#dlg').close();render();toast('Mode administrateur activé (10 min)');openData()}
+  else{if(++admFail>=3){admBlock=Date.now()+3e4;admFail=0}$('#ae').textContent='Mot de passe incorrect';$('#ap').value='';$('#ap').focus()}};
+ $('#dlg').showModal();$('#ap').focus()}
+$('#ttl').addEventListener('click',()=>{const n=Date.now();tp=tp.filter(t=>n-t<1200);tp.push(n);if(tp.length>=3){tp=[];admAsk()}});
+document.addEventListener('click',()=>{if(ADM){clearTimeout(ADMT);ADMT=setTimeout(admOff,6e5)}},true);
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&ADM)admOff()});
+
+const APP_V='2026.10.28-1',LOGO_SRC=''/* collez ici votre logo en data:image/... pour remplacer le logo texte */;
+const LOGO='<svg viewBox="0 0 150 34" role="img" aria-label="Bowman"><rect width="34" height="34" rx="8" fill="var(--ac)"/><text x="17" y="25" text-anchor="middle" font-family="Segoe UI,system-ui,sans-serif" font-size="22" font-weight="800" fill="#fff">B</text><text x="42" y="25" font-family="Segoe UI,system-ui,sans-serif" font-size="21" font-weight="800" letter-spacing="1.5" fill="currentColor">BOWMAN</text></svg>';
+document.querySelectorAll('.lgh').forEach(e=>e.innerHTML=LOGO_SRC?'<img src="'+LOGO_SRC+'" alt="Bowman">':LOGO);
+/* ---------- annuaire : clients du Sheet à retrouver en tapant leur nom ---------- */
+let AN=null,PICK=null;try{AN=JSON.parse(localStorage.getItem('sav_bowman_an'))}catch(e){}
+async function anLoad(){if(!API||!PWD)return;try{const r=await api('annuaire');if(r.ok&&r.clients){AN={c:r.clients.filter(c=>c.n),m:r.machines||[]};try{localStorage.setItem('sav_bowman_an',JSON.stringify(AN))}catch(e){}}}catch(e){}}
+const anFind=q=>{q=norm(q);if(!AN||q.length<2)return[];return AN.c.filter(c=>norm(c.n).includes(q)&&!cli(c.n)).sort((a,b)=>(norm(a.n).startsWith(q)?0:1)-(norm(b.n).startsWith(q)?0:1)||a.n.localeCompare(b.n)).slice(0,8)};
+const anMach=n=>AN?AN.m.filter(m=>norm(m.c)===norm(n)):[];
+const anSec=()=>{const A=anFind(S.q);return A.length?'<div class="gh">Dans le Sheet (pas encore ajoutés)</div>'+A.map(a=>`<div class="row" tabindex="0" data-a="anAdd" data-v="${esc(a.n)}"><div class="m"><b>${esc(a.n)}</b><small>${esc(a.v||'—')} · ${anMach(a.n).length} machine(s)</small></div><button class="pr" data-a="anAdd" data-v="${esc(a.n)}">+ Ajouter</button></div>`).join(''):''};
+function anAdd(n){const a=AN&&AN.c.find(x=>x.n===n);if(!a||cli(n))return;snap();const c=mkC(a),M=anMach(n);DB.c.push(c);M.forEach(m=>DB.m.push({...m,c:n,q:+m.q||1,id:Math.max(0,...DB.m.map(x=>x.id))+1,h:[],pl:''}));mig(DB);save();S.mode='c';S.sel=n;S.q='';$('#q').value='';document.body.classList.add('d');render();geoOne(c).then(()=>render());toast(n+' ajouté'+(M.length?' avec '+M.length+' machine(s)':''),1)}
+function anBind(){const f=$('#f'),n=f.elements.n;if(!n||!AN)return;const box=document.createElement('div');box.className='sgl';box.style.display='none';n.parentNode.style.position='relative';n.parentNode.appendChild(box);
+ const hide=()=>box.style.display='none',pick=a=>{PICK=a;['n','v','t','ct','e','ad','cp','no'].forEach(k=>{if(f.elements[k])f.elements[k].value=a[k]||''});const d=f.querySelector('details');if(d)d.open=true;hide();const k=anMach(a.n).length;$('#amn').textContent=k;$('#amw').style.display=k?'block':'none';toast('Infos du Sheet reprises'+(k?' · '+k+' machine(s)':''))};
+ n.oninput=()=>{PICK=null;$('#amw').style.display='none';const L=anFind(n.value);box._l=L;box.innerHTML=L.map((a,i)=>`<div data-i="${i}"><b>${esc(a.n)}</b> <small>${esc(a.v||'')}</small></div>`).join('');box.style.display=L.length?'block':'none'};
+ box.onmousedown=e=>e.preventDefault();box.onclick=e=>{const d=e.target.closest('[data-i]');if(d)pick(box._l[+d.dataset.i])};
+ n.onchange=()=>{const a=AN.c.find(x=>norm(x.n)===norm(n.value)&&!cli(x.n));if(a&&!PICK)pick(a)};n.onblur=()=>setTimeout(hide,150)}
+/* ---------- même version sur tous les appareils ---------- */
+async function checkV(){if(!/^https?:/.test(location.protocol))return;try{const t=await(await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})).text(),m=t.match(/const APP_V='([^']+)'/);if(m&&m[1]!==APP_V)$('#vb').style.display='flex'}catch(e){}}
+setInterval(checkV,3e5);document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkV()});
+theme();boot();
+</script></body></html>
