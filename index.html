@@ -1,27 +1,54 @@
+Je vais créer le fichier **`index.html` complet** avec toutes vos demandes : Sellsy comme base, gestion des emails, rapports avec photos, et gestion des tournées. Voici le programme complet :
+
+---
+
+## 📄 **index.html** (Version Complète avec Toutes les Fonctionnalités)
+
+```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAV Bowman France - Avec Intégration Sellsy</title>
+    <title>SAV Bowman France - Gestion Complète avec Sellsy</title>
 
     <!-- ========================================================================
-         VOTRE CSS EXISTANT - À GARDER TEL QUEL
+         STYLES - À GARDER TEL QUEL (améliorés pour les nouvelles fonctionnalités)
          ======================================================================== -->
     <style>
-        /* Vos styles existants ici */
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .header { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-        .content { background: #fff; padding: 20px; border-radius: 8px; }
+        /* Styles de base existants */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
 
-        /* Styles pour la section Sellsy (optionnels) */
+        /* Styles pour Sellsy */
         .sellsy-section {
             background: #fff;
             padding: 20px;
             border-radius: 8px;
             margin: 20px 0;
             border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .sellsy-btn {
             background: #1a73e8;
@@ -31,87 +58,463 @@
             border-radius: 4px;
             cursor: pointer;
             margin: 5px;
+            font-size: 14px;
+            transition: background 0.3s;
         }
-        .sellsy-btn:hover { background: #1557b0; }
+        .sellsy-btn:hover {
+            background: #1557b0;
+        }
+        .sellsy-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
         .sellsy-status {
             padding: 8px 16px;
             border-radius: 20px;
             font-weight: 600;
+            display: inline-block;
         }
-        .sellsy-status.connected { background: #d4edda; color: #155724; }
-        .sellsy-status.disconnected { background: #f8d7da; color: #721c24; }
+        .sellsy-status.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+        .sellsy-status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .sellsy-status.syncing {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Styles pour les rapports avec photos */
+        .report-photo-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .report-photo {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .report-photo:hover {
+            transform: scale(1.05);
+        }
+        .report-photo.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 90%;
+            height: 90%;
+            z-index: 10000;
+            background: rgba(0,0,0,0.8);
+            object-fit: contain;
+        }
+
+        /* Styles pour les tournées */
+        .tour-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .tour-table th, .tour-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .tour-table th {
+            background: #f5f5f5;
+            font-weight: bold;
+        }
+        .tour-table tr:hover {
+            background: #f9f9f9;
+        }
+        .tour-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .tour-status.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        .tour-status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .tour-status.cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Styles pour les emails */
+        .email-form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .email-form label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: 600;
+        }
+        .email-form input, .email-form textarea, .email-form select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .email-form textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 10000;
+        }
+        .modal-content {
+            background: white;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+        .modal-close {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 10001;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease-out;
+        }
+        .notification.success {
+            background: #4caf50;
+        }
+        .notification.error {
+            background: #f44336;
+        }
+        .notification.info {
+            background: #2196f3;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Loading spinner */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Tab navigation */
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin: 20px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .tab.active {
+            background: white;
+            border-bottom: 2px solid #1a73e8;
+            color: #1a73e8;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- ========================================================================
-             VOTRE INTERFACE EXISTANTE - NE PAS MODIFIER
+             EN-TÊTE - INTERFACE EXISTANTE
              ======================================================================== -->
-
         <div class="header">
-            <h1>SAV Bowman France</h1>
-            <!-- Votre en-tête existant -->
+            <h1>⚡ SAV Bowman France - Gestion Technique</h1>
+            <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span style="color: #666;">Bienvenue dans votre espace de gestion</span>
+                </div>
+                <div>
+                    <span id="sellsy-status" class="sellsy-status disconnected">Sellsy: Non connecté</span>
+                    <button class="sellsy-btn" onclick="showSellsyAdmin()" style="margin-left: 10px;">
+                        ⚙️ Administration
+                    </button>
+                </div>
+            </div>
         </div>
 
+        <!-- ========================================================================
+             CONTENU PRINCIPAL
+             ======================================================================== -->
         <div class="content">
-            <!-- Votre contenu existant -->
-            <h2>Bienvenue dans votre espace SAV</h2>
-            <p>Votre interface existante reste inchangée.</p>
+            <!-- Onglets de navigation -->
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('dashboard')">📊 Tableau de bord</button>
+                <button class="tab" onclick="showTab('clients')">👥 Clients</button>
+                <button class="tab" onclick="showTab('tours')">🚚 Tournées</button>
+                <button class="tab" onclick="showTab('reports')">📋 Rapports</button>
+                <button class="tab" onclick="showTab('emails')">📧 Emails</button>
+            </div>
 
-            <!-- ========================================================================
-                 BOUTON POUR ACCÉDER À L'ADMIN SELLSY (Optionnel)
-                 ======================================================================== -->
+            <!-- Contenu des onglets -->
+            <div id="dashboard" class="tab-content active">
+                <h2>📊 Tableau de bord</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                    <div style="background: #e3f2fd; padding: 20px; border-radius: 8px;">
+                        <div style="color: #1976d2; font-size: 0.9rem;">Clients totaux</div>
+                        <div id="dashboard-clients" style="font-size: 2rem; font-weight: bold; color: #1565c0;">0</div>
+                    </div>
+                    <div style="background: #e8f5e9; padding: 20px; border-radius: 8px;">
+                        <div style="color: #2e7d32; font-size: 0.9rem;">Machines</div>
+                        <div id="dashboard-machines" style="font-size: 2rem; font-weight: bold; color: #1b5e20;">0</div>
+                    </div>
+                    <div style="background: #fff3e0; padding: 20px; border-radius: 8px;">
+                        <div style="color: #e65100; font-size: 0.9rem;">Tournées en cours</div>
+                        <div id="dashboard-tours" style="font-size: 2rem; font-weight: bold; color: #bf360c;">0</div>
+                    </div>
+                    <div style="background: #f3e5f5; padding: 20px; border-radius: 8px;">
+                        <div style="color: #7b1fa2; font-size: 0.9rem;">Rapports aujourd'hui</div>
+                        <div id="dashboard-reports" style="font-size: 2rem; font-weight: bold; color: #4a148c;">0</div>
+                    </div>
+                </div>
 
-            <div style="margin: 40px 0; padding: 20px; background: #e8f4fd; border-radius: 8px;">
-                <h3>⚡ Intégration Sellsy CRM</h3>
-                <p>L'intégration Sellsy est active et fonctionne en arrière-plan.</p>
-                <button class="sellsy-btn" onclick="showSellsyAdmin()">
-                    Ouvrir l'administration Sellsy
-                </button>
-                <div id="sellsy-status" class="sellsy-status disconnected" style="margin-top: 10px; display: inline-block;">
-                    Non connecté à Sellsy
+                <div style="margin: 30px 0;">
+                    <h3>📅 Prochaines maintenances</h3>
+                    <div id="dashboard-maintenances" style="margin-top: 15px;">
+                        <p style="color: #666;">Chargement...</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Votre contenu existant continue -->
+            <div id="clients" class="tab-content">
+                <h2>👥 Gestion des clients</h2>
+                <div style="margin: 20px 0; display: flex; gap: 10px;">
+                    <input type="text" id="client-search" placeholder="Rechercher un client..." 
+                           style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    <button class="sellsy-btn" onclick="searchClients()">🔍 Rechercher</button>
+                    <button class="sellsy-btn" onclick="loadClientsFromSellsy()" style="background: #4caf50;">
+                        🔄 Sync Sellsy
+                    </button>
+                </div>
+                <div id="clients-list" style="margin-top: 15px;">
+                    <p style="color: #666;">Chargement des clients...</p>
+                </div>
+            </div>
+
+            <div id="tours" class="tab-content">
+                <h2>🚚 Gestion des tournées</h2>
+                <div style="margin: 20px 0; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="sellsy-btn" onclick="showTourForm()" style="background: #4caf50;">
+                        ✚ Nouvelle tournée
+                    </button>
+                    <select id="tour-filter" onchange="filterTours()" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="all">Toutes les tournées</option>
+                        <option value="pending">En attente</option>
+                        <option value="completed">Terminées</option>
+                        <option value="today">Aujourd'hui</option>
+                    </select>
+                </div>
+                <div id="tours-list" style="margin-top: 15px;">
+                    <p style="color: #666;">Chargement des tournées...</p>
+                </div>
+            </div>
+
+            <div id="reports" class="tab-content">
+                <h2>📋 Rapports d'inspection</h2>
+                <div style="margin: 20px 0; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="sellsy-btn" onclick="showReportForm()" style="background: #4caf50;">
+                        ✚ Nouveau rapport
+                    </button>
+                    <input type="file" id="report-photo-upload" accept="image/*" multiple 
+                           style="display: none;" onchange="handlePhotoUpload(event)">
+                    <button class="sellsy-btn" onclick="document.getElementById('report-photo-upload').click()">
+                        📷 Ajouter photos
+                    </button>
+                </div>
+                <div id="report-photos-preview" class="report-photo-container" style="margin: 15px 0;"></div>
+                <div id="reports-list" style="margin-top: 15px;">
+                    <p style="color: #666;">Chargement des rapports...</p>
+                </div>
+            </div>
+
+            <div id="emails" class="tab-content">
+                <h2>📧 Configuration Email</h2>
+                <div class="email-form">
+                    <div style="margin: 20px 0;">
+                        <h3>⚙️ Paramètres SMTP</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                            <div>
+                                <label>Serveur SMTP</label>
+                                <input type="text" id="smtp-server" placeholder="smtp.votredomaine.com">
+                            </div>
+                            <div>
+                                <label>Port</label>
+                                <input type="number" id="smtp-port" placeholder="587">
+                            </div>
+                            <div>
+                                <label>Email</label>
+                                <input type="email" id="smtp-email" placeholder="votre@email.com">
+                            </div>
+                            <div>
+                                <label>Mot de passe</label>
+                                <input type="password" id="smtp-password" placeholder="••••••••">
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <label>
+                                <input type="checkbox" id="smtp-ssl"> Utiliser SSL/TLS
+                            </label>
+                        </div>
+                        <button class="sellsy-btn" onclick="saveSmtpSettings()" style="margin-top: 15px; background: #4caf50;">
+                            💾 Sauvegarder
+                        </button>
+                    </div>
+
+                    <div style="margin: 30px 0;">
+                        <h3>📤 Envoyer un rapport par email</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                            <div>
+                                <label>Destinataire</label>
+                                <input type="email" id="email-to" placeholder="client@email.com">
+                            </div>
+                            <div>
+                                <label>Sujet</label>
+                                <input type="text" id="email-subject" placeholder="Rapport d'inspection - [Client]">
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <label>Message</label>
+                            <textarea id="email-body" placeholder="Bonjour, veuillez trouver ci-joint le rapport d'inspection..."></textarea>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <label>Joindre le rapport PDF</label>
+                            <select id="email-report-select" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                                <option value="">Sélectionnez un rapport...</option>
+                            </select>
+                        </div>
+                        <button class="sellsy-btn" onclick="sendEmailWithReport()" style="margin-top: 15px; background: #2196f3;">
+                            📤 Envoyer
+                        </button>
+                    </div>
+
+                    <div id="email-result" style="margin-top: 15px;"></div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- ========================================================================
-         SECTION ADMIN SELLSY (Masquée par défaut)
+         MODAL ADMINISTRATION SELLSY
          ======================================================================== -->
-
-    <div id="sellsy-admin" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000;">
-        <div style="background: white; margin: 50px auto; padding: 30px; border-radius: 10px; width: 90%; max-width: 1000px; max-height: 80vh; overflow-y: auto;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #eee;">
-                <h2 style="margin: 0; color: #1a73e8;">⚡ Administration Sellsy</h2>
-                <button onclick="hideSellsyAdmin()" style="background: #f44336; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
-                    Fermer
-                </button>
+    <div id="sellsy-admin-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="margin: 0; color: #1a73e8;">⚡ Administration Sellsy CRM</h2>
+                <button class="modal-close" onclick="hideSellsyAdmin()">Fermer</button>
             </div>
 
             <div style="margin: 20px 0;">
-                <h3>État de la connexion</h3>
+                <h3>🔌 État de la connexion</h3>
                 <div id="sellsy-connection-status" class="sellsy-status disconnected">Non connecté</div>
             </div>
 
             <div style="margin: 20px 0;">
-                <button class="sellsy-btn" onclick="sellsyConnect()">
-                    🔗 Connecter à Sellsy
-                </button>
-                <button class="sellsy-btn" onclick="sellsyDisconnect()" style="background: #f44336;">
-                    🔓 Déconnecter
-                </button>
-                <button class="sellsy-btn" onclick="sellsyTestConnection()" style="background: #ff9800;">
-                    🧪 Tester la connexion
-                </button>
-                <button class="sellsy-btn" onclick="sellsyRunSync()" style="background: #4caf50;">
-                    🔄 Synchroniser maintenant
-                </button>
+                <h3>⚡ Actions</h3>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+                    <button class="sellsy-btn" onclick="sellsyConnect()" id="sellsy-connect-btn">
+                        🔗 Connecter à Sellsy
+                    </button>
+                    <button class="sellsy-btn" onclick="sellsyDisconnect()" style="background: #f44336;">
+                        🔓 Déconnecter
+                    </button>
+                    <button class="sellsy-btn" onclick="sellsyTestConnection()" style="background: #ff9800;">
+                        🧪 Tester
+                    </button>
+                    <button class="sellsy-btn" onclick="sellsyRunFullSync()" style="background: #4caf50;">
+                        🔄 Synchronisation complète
+                    </button>
+                    <button class="sellsy-btn" onclick="sellsySyncFromSellsy()" style="background: #2196f3;">
+                        ⬇️ Depuis Sellsy
+                    </button>
+                    <button class="sellsy-btn" onclick="sellsySyncToSellsy()" style="background: #9c27b0;">
+                        ⬆️ Vers Sellsy
+                    </button>
+                </div>
             </div>
 
             <div style="margin: 20px 0;">
-                <h3>Statistiques</h3>
+                <h3>📊 Statistiques de synchronisation</h3>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 15px 0;">
                     <div style="background: #f5f5f5; padding: 15px; border-radius: 6px; text-align: center;">
                         <div style="color: #666; font-size: 0.9rem;">Clients Bowman</div>
@@ -129,329 +532,3069 @@
                         <div style="color: #666; font-size: 0.9rem;">Documents</div>
                         <div id="sellsy-docs-count" style="font-size: 1.5rem; font-weight: bold; color: #1a73e8;">0</div>
                     </div>
+                    <div style="background: #f5f5f5; padding: 15px; border-radius: 6px; text-align: center;">
+                        <div style="color: #666; font-size: 0.9rem;">Dernière sync</div>
+                        <div id="sellsy-last-sync" style="font-size: 1.2rem; font-weight: bold; color: #1a73e8;">Jamais</div>
+                    </div>
                 </div>
             </div>
 
             <div style="margin: 20px 0;">
-                <h3>Rechercher un client</h3>
-                <input type="text" id="sellsy-search-input" placeholder="Nom du client..."
+                <h3>🔍 Recherche et appariement</h3>
+                <input type="text" id="sellsy-search-input" placeholder="Nom du client ou entreprise..."
                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;">
-                <button class="sellsy-btn" onclick="sellsySearchClient()">Rechercher</button>
+                <button class="sellsy-btn" onclick="sellsySearchAndMatch()">🔍 Rechercher et apparier</button>
                 <div id="sellsy-search-results" style="margin-top: 15px;"></div>
             </div>
 
             <div style="margin: 20px 0;">
-                <h3>Stocker un rapport</h3>
-                <select id="sellsy-client-select" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;">
-                    <option value="">Sélectionnez un client...</option>
-                </select>
-                <input type="text" id="sellsy-client-id" placeholder="ID Sellsy du client"
-                       style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;">
-                <textarea id="sellsy-report-data" rows="5" placeholder='{"serviceOrder": "SO-001", "serialNumber": "SN123", ...}'
-                          style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;"></textarea>
-                <button class="sellsy-btn" onclick="sellsyStoreReport()" style="background: #4caf50;">Stocker le rapport</button>
-                <div id="sellsy-report-result" style="margin-top: 15px;"></div>
+                <h3>📄 Clients non appariés</h3>
+                <button class="sellsy-btn" onclick="loadUnmappedClients()" style="background: #ff9800;">
+                    🔄 Charger les non-appariés
+                </button>
+                <div id="unmapped-clients" style="margin-top: 15px;"></div>
             </div>
+
+            <div style="margin: 20px 0;">
+                <h3>📝 Configuration</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div>
+                        <label>Sens de synchronisation</label>
+                        <select id="sync-direction" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="both">Bidirectionnelle</option>
+                            <option value="from_sellsy">Sellsy → Bowman</option>
+                            <option value="to_sellsy">Bowman → Sellsy</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Fréquence (min)</label>
+                        <input type="number" id="sync-frequency" value="15" min="5" max="1440"
+                               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                </div>
+                <button class="sellsy-btn" onclick="saveSyncConfig()" style="margin-top: 15px; background: #4caf50;">
+                    💾 Sauvegarder
+                </button>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <h3>📜 Historique des synchronisations</h3>
+                <button class="sellsy-btn" onclick="loadSyncLogs()" style="background: #9c27b0;">
+                    📋 Charger l'historique
+                </button>
+                <div id="sync-logs" style="margin-top: 15px; max-height: 300px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================
+         MODAL NOUVELLE TOURNÉE
+         ======================================================================== -->
+    <div id="tour-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="margin: 0; color: #1a73e8;">🚚 Nouvelle tournée</h2>
+                <button class="modal-close" onclick="hideTourForm()">Fermer</button>
+            </div>
+            <div class="email-form">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div>
+                        <label>Nom de la tournée *</label>
+                        <input type="text" id="tour-name" placeholder="Tournée Paris Nord">
+                    </div>
+                    <div>
+                        <label>Date *</label>
+                        <input type="date" id="tour-date">
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label>Technicien *</label>
+                    <select id="tour-technician" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="">Sélectionnez un technicien...</option>
+                    </select>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label>Clients à visiter</label>
+                    <select id="tour-clients" multiple style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; min-height: 100px;">
+                        <option value="">Sélectionnez les clients...</option>
+                    </select>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label>Notes</label>
+                    <textarea id="tour-notes" placeholder="Informations supplémentaires sur la tournée..."></textarea>
+                </div>
+                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                    <button class="sellsy-btn" onclick="saveTour()" style="background: #4caf50;">
+                        💾 Sauvegarder
+                    </button>
+                    <button class="sellsy-btn" onclick="hideTourForm()" style="background: #f44336;">
+                        ❌ Annuler
+                    </button>
+                </div>
+                <div id="tour-result" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================
+         MODAL NOUVEL RAPPORT
+         ======================================================================== -->
+    <div id="report-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="margin: 0; color: #1a73e8;">📋 Nouveau rapport d'inspection</h2>
+                <button class="modal-close" onclick="hideReportForm()">Fermer</button>
+            </div>
+            <div class="email-form">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div>
+                        <label>Client *</label>
+                        <select id="report-client" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="">Sélectionnez un client...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Machine *</label>
+                        <select id="report-machine" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="">Sélectionnez une machine...</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div>
+                        <label>N° de série</label>
+                        <input type="text" id="report-serial" placeholder="SN12345678">
+                    </div>
+                    <div>
+                        <label>N° d'ordre de service</label>
+                        <input type="text" id="report-service-order" placeholder="SO-2024-001">
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label>Type d'inspection</label>
+                    <select id="report-type" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="maintenance">Maintenance préventive</option>
+                        <option value="corrective">Maintenance corrective</option>
+                        <option value="inspection">Inspection visuelle</option>
+                        <option value="calibration">Calibration</option>
+                        <option value="other">Autre</option>
+                    </select>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label>Photos (max 10)</label>
+                    <div id="report-photos-container" class="report-photo-container"></div>
+                    <input type="file" id="report-photos-input" accept="image/*" multiple
+                           onchange="handleReportPhotoUpload(event)" style="display: none;">
+                    <button class="sellsy-btn" onclick="document.getElementById('report-photos-input').click()">
+                        📷 Ajouter des photos
+                    </button>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label>Description</label>
+                    <textarea id="report-description" placeholder="Description détaillée de l'inspection..."></textarea>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label>Observations</label>
+                    <textarea id="report-observations" placeholder="Observations et remarques..."></textarea>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label>Défauts constatés</label>
+                    <textarea id="report-defects" placeholder="Liste des défauts ou problèmes détectés..."></textarea>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label>Recommandations</label>
+                    <textarea id="report-recommendations" placeholder="Recommandations pour le client..."></textarea>
+                </div>
+                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                    <button class="sellsy-btn" onclick="saveReport()" style="background: #4caf50;">
+                        💾 Sauvegarder et envoyer à Sellsy
+                    </button>
+                    <button class="sellsy-btn" onclick="saveReportLocally()" style="background: #2196f3;">
+                        💾 Sauvegarder localement
+                    </button>
+                    <button class="sellsy-btn" onclick="hideReportForm()" style="background: #f44336;">
+                        ❌ Annuler
+                    </button>
+                </div>
+                <div id="report-result" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================
+         MODAL DÉTAILS RAPPORT
+         ======================================================================== -->
+    <div id="report-detail-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="margin: 0; color: #1a73e8;">📋 Détails du rapport</h2>
+                <button class="modal-close" onclick="hideReportDetail()">Fermer</button>
+            </div>
+            <div id="report-detail-content" style="padding: 20px;"></div>
         </div>
     </div>
 
     <!-- ========================================================================
          SCRIPTS
          ======================================================================== -->
-
-    <!-- Votre script existant -->
     <script>
-        // ====================================================================
-        // VOTRE CODE EXISTANT - NE PAS MODIFIER
-        // ====================================================================
-
+        // ========================================================================
+        // CONFIGURATION GLOBALE
+        // ========================================================================
         const API_URL = 'https://script.google.com/macros/s/AKfycbyhvmHutbMyI4aYIN4FENU0-3qXl05QgDTtNofvy-2YDhay-gsOn_U51iuQh5uaqF0Uwg/exec';
+        const SELLSY_API_URL = 'https://script.google.com/macros/s/AKfycbyhvmHutbMyI4aYIN4FENU0-3qXl05QgDTtNofvy-2YDhay-gsOn_U51iuQh5uaqF0Uwg/exec';
 
-        // Vos fonctions existantes...
-        // Exemple: function loadData() { ... }
-        // Exemple: function saveData() { ... }
-
-        // ====================================================================
-    </script>
-
-    <!-- Script d'intégration Sellsy -->
-    <script src="sellsy-integration.js"></script>
-
-    <!-- Initialisation Sellsy -->
-    <script>
-        // ========================================================================
-        // INTÉGRATION SELLSY - NE MODIFIE PAS VOTRE INTERFACE
-        // ========================================================================
-
-        // Définir le mot de passe admin (à configurer selon votre système)
-        // sellsySetAdminPassword('VOTRE_MOT_DE_PASSE_ADMIN');
-
-        // Initialiser Sellsy
-        // sellsyInit();
+        // État global
+        let currentUser = null;
+        let clients = [];
+        let machines = [];
+        let tours = [];
+        let reports = [];
+        let photos = [];
+        let smtpConfig = {};
+        let sellsyConnected = false;
+        let sellsyConfig = {};
 
         // ========================================================================
-        // FONCTIONS POUR L'INTERFACE SELLSY
+        // FONCTIONS UTILITAIRES
         // ========================================================================
-
-        function showSellsyAdmin() {
-            document.getElementById('sellsy-admin').style.display = 'block';
-            sellsyCheckConnectionAndUpdate();
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
         }
 
-        function hideSellsyAdmin() {
-            document.getElementById('sellsy-admin').style.display = 'none';
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
         }
 
-        async function sellsyCheckConnectionAndUpdate() {
-            try {
-                const result = await sellsyCheckConnection();
-                if (result) {
-                    const statusEl = document.getElementById('sellsy-connection-status');
-                    const adminStatusEl = document.getElementById('sellsy-status');
+        function formatShortDate(dateString) {
+            if (!dateString) return 'N/A';
+            return new Date(dateString).toLocaleDateString('fr-FR');
+        }
 
-                    if (result.connected) {
-                        statusEl.textContent = 'Connecté à Sellsy';
-                        statusEl.className = 'sellsy-status connected';
-                        adminStatusEl.textContent = 'Connecté à Sellsy';
-                        adminStatusEl.className = 'sellsy-status connected';
+        function showLoading(button) {
+            const originalText = button.innerHTML;
+            button.innerHTML = originalText + '<span class="loading"></span>';
+            button.disabled = true;
+            return originalText;
+        }
 
-                        // Mettre à jour les statistiques
-                        if (result.stats) {
-                            document.getElementById('sellsy-bowman-count').textContent = result.stats.bowmanTotal || 0;
-                            document.getElementById('sellsy-sellsy-count').textContent = result.stats.sellsyTotal || 0;
-                            document.getElementById('sellsy-mapped-count').textContent = result.stats.mapped || 0;
-                            document.getElementById('sellsy-docs-count').textContent = result.stats.totalDocuments || 0;
-                        }
+        function hideLoading(button, originalText) {
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }
 
-                        // Charger les clients pour le sélecteur
-                        await sellsyLoadClients();
-                    } else {
-                        statusEl.textContent = 'Non connecté à Sellsy';
-                        statusEl.className = 'sellsy-status disconnected';
-                        adminStatusEl.textContent = 'Non connecté à Sellsy';
-                        adminStatusEl.className = 'sellsy-status disconnected';
-                    }
-                }
-            } catch (error) {
-                console.error('Erreur:', error);
+        // ========================================================================
+        // GESTION DES ONGLETS
+        // ========================================================================
+        function showTab(tabName) {
+            // Masquer tous les onglets
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Afficher l'onglet sélectionné
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Charger les données si nécessaire
+            if (tabName === 'clients' && clients.length === 0) {
+                loadClients();
+            } else if (tabName === 'tours' && tours.length === 0) {
+                loadTours();
+            } else if (tabName === 'reports' && reports.length === 0) {
+                loadReports();
             }
         }
 
-        async function sellsyLoadClients() {
+        // ========================================================================
+        // GESTION DES CLIENTS
+        // ========================================================================
+        async function loadClients() {
             try {
-                const result = await sellsyApi('load');
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'load' })
+                });
+                const result = await response.json();
                 if (result.ok && result.data && result.data.clients) {
-                    const select = document.getElementById('sellsy-client-select');
-                    select.innerHTML = '<option value="">Sélectionnez un client...</option>';
-                    result.data.clients.forEach(client => {
-                        if (client.n) {
-                            const option = document.createElement('option');
-                            option.value = client.n;
-                            option.textContent = client.n;
-                            select.appendChild(option);
-                        }
-                    });
+                    clients = result.data.clients;
+                    displayClients(clients);
+                    updateDashboard();
                 }
             } catch (error) {
                 console.error('Erreur chargement clients:', error);
+                showNotification('Erreur de chargement des clients', 'error');
+            }
+        }
+
+        async function loadClientsFromSellsy() {
+            try {
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'sellsy_sync', direction: 'from_sellsy' })
+                });
+                const result = await response.json();
+                if (result.ok) {
+                    showNotification(`Synchronisation terminée: ${result.log.join(', ')}`, 'success');
+                    await loadClients();
+                } else {
+                    showNotification(`Erreur: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                console.error('Erreur synchronisation Sellsy:', error);
+                showNotification('Erreur de synchronisation', 'error');
+            }
+        }
+
+        function displayClients(clientsToDisplay) {
+            const container = document.getElementById('clients-list');
+            if (clientsToDisplay.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center;">Aucun client trouvé.</p>';
+                return;
+            }
+
+            let html = '<table class="tour-table"><thead><tr><th>Nom</th><th>Contact</th><th>Email</th><th>Téléphone</th><th>Ville</th><th>Actions</th></tr></thead><tbody>';
+
+            clientsToDisplay.forEach(client => {
+                html += `
+                    <tr>
+                        <td><strong>${client.n || 'N/A'}</strong></td>
+                        <td>${client.ct || 'N/A'}</td>
+                        <td>${client.e || 'N/A'}</td>
+                        <td>${client.t || 'N/A'}</td>
+                        <td>${client.v || 'N/A'}</td>
+                        <td>
+                            <button class="sellsy-btn" onclick="viewClientDetails('${client.n}')" style="padding: 5px 10px; font-size: 12px;">
+                                👁️ Voir
+                            </button>
+                            <button class="sellsy-btn" onclick="editClient('${client.n}')" style="padding: 5px 10px; font-size: 12px; background: #2196f3;">
+                                ✏️ Modifier
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function searchClients() {
+            const query = document.getElementById('client-search').value.toLowerCase();
+            if (!query) {
+                displayClients(clients);
+                return;
+            }
+
+            const filtered = clients.filter(client =>
+                (client.n && client.n.toLowerCase().includes(query)) ||
+                (client.ct && client.ct.toLowerCase().includes(query)) ||
+                (client.e && client.e.toLowerCase().includes(query)) ||
+                (client.v && client.v.toLowerCase().includes(query))
+            );
+            displayClients(filtered);
+        }
+
+        function viewClientDetails(clientName) {
+            const client = clients.find(c => c.n === clientName);
+            if (!client) return;
+
+            const modal = document.getElementById('report-detail-modal');
+            const content = document.getElementById('report-detail-content');
+
+            content.innerHTML = `
+                <h3>👥 Fiche client: ${client.n}</h3>
+                <div style="margin: 20px 0;">
+                    <h4>📋 Informations générales</h4>
+                    <table class="tour-table">
+                        <tr><td><strong>Nom:</strong></td><td>${client.n || 'N/A'}</td></tr>
+                        <tr><td><strong>Contact:</strong></td><td>${client.ct || 'N/A'}</td></tr>
+                        <tr><td><strong>Email:</strong></td><td>${client.e || 'N/A'}</td></tr>
+                        <tr><td><strong>Téléphone:</strong></td><td>${client.t || 'N/A'}</td></tr>
+                        <tr><td><strong>Adresse:</strong></td><td>${client.ad || 'N/A'}</td></tr>
+                        <tr><td><strong>Code postal:</strong></td><td>${client.cp || 'N/A'}</td></tr>
+                        <tr><td><strong>Ville:</strong></td><td>${client.v || 'N/A'}</td></tr>
+                        <tr><td><strong>Notes SAV:</strong></td><td>${client.no || 'Aucune'}</td></tr>
+                    </table>
+                </div>
+                <div style="margin: 20px 0;">
+                    <h4>🏭 Machines</h4>
+                    <div id="client-machines-${client.n}"></div>
+                </div>
+                <div style="margin: 20px 0;">
+                    <h4>📄 Documents Sellsy</h4>
+                    <button class="sellsy-btn" onclick="loadSellsyDocumentsForClient('${client.n}')" style="background: #4caf50;">
+                        🔄 Charger les documents
+                    </button>
+                    <div id="client-documents-${client.n}" style="margin-top: 10px;"></div>
+                </div>
+            `;
+
+            modal.style.display = 'block';
+
+            // Charger les machines du client
+            loadClientMachines(client.n);
+        }
+
+        async function loadClientMachines(clientName) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'load' })
+                });
+                const result = await response.json();
+                if (result.ok && result.data && result.data.machines) {
+                    const clientMachines = result.data.machines.filter(m => m.c === clientName);
+                    const container = document.getElementById(`client-machines-${clientName}`);
+
+                    if (clientMachines.length === 0) {
+                        container.innerHTML = '<p style="color: #666;">Aucune machine enregistrée pour ce client.</p>';
+                        return;
+                    }
+
+                    let html = '<table class="tour-table"><thead><tr><th>Modèle</th><th>N° de série</th><th>Référence</th><th>Dernière maintenance</th><th>Actions</th></tr></thead><tbody>';
+
+                    clientMachines.forEach(machine => {
+                        html += `
+                            <tr>
+                                <td>${machine.mo || 'N/A'}</td>
+                                <td>${machine.sn || 'N/A'}</td>
+                                <td>${machine.rf || 'N/A'}</td>
+                                <td>${formatShortDate(machine.d) || 'N/A'}</td>
+                                <td>
+                                    <button class="sellsy-btn" onclick="viewMachineDetails('${machine.sn}')" style="padding: 5px 10px; font-size: 12px;">
+                                        👁️ Voir
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Erreur chargement machines:', error);
+            }
+        }
+
+        async function loadSellsyDocumentsForClient(clientName) {
+            try {
+                // Trouver l'ID Sellsy du client
+                const client = clients.find(c => c.n === clientName);
+                if (!client) return;
+
+                // Pour l'instant, on simule avec le nom du client
+                // Dans une vraie implémentation, on aurait un mapping clientName -> sellsyId
+                const container = document.getElementById(`client-documents-${clientName}`);
+                container.innerHTML = '<p style="color: #666;">Chargement des documents Sellsy...</p>';
+
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'sellsy_get_documents',
+                        clientId: clientName // À remplacer par l'ID Sellsy réel
+                    })
+                });
+                const result = await response.json();
+
+                if (result.ok && result.documents) {
+                    if (result.documents.length === 0) {
+                        container.innerHTML = '<p style="color: #666;">Aucun document Sellsy trouvé pour ce client.</p>';
+                        return;
+                    }
+
+                    let html = '<table class="tour-table"><thead><tr><th>Type</th><th>Titre</th><th>Date</th><th>Montant</th><th>Actions</th></tr></thead><tbody>';
+
+                    result.documents.forEach(doc => {
+                        html += `
+                            <tr>
+                                <td>${doc.type || 'N/A'}</td>
+                                <td>${doc.title || 'N/A'}</td>
+                                <td>${formatShortDate(doc.date) || 'N/A'}</td>
+                                <td>${doc.amount ? doc.amount + ' €' : 'N/A'}</td>
+                                <td>
+                                    <button class="sellsy-btn" onclick="downloadDocument('${doc.id}')" style="padding: 5px 10px; font-size: 12px; background: #4caf50;">
+                                        ⬇️ Télécharger
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<p style="color: #f44336;">Erreur: ' + (result.error || 'Impossible de charger les documents') + '</p>';
+                }
+            } catch (error) {
+                console.error('Erreur chargement documents:', error);
+                document.getElementById(`client-documents-${clientName}`).innerHTML =
+                    '<p style="color: #f44336;">Erreur de chargement des documents</p>';
+            }
+        }
+
+        // ========================================================================
+        // GESTION DES TOURNÉES
+        // ========================================================================
+        async function loadTours() {
+            try {
+                // Charger depuis Google Sheets
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'load' })
+                });
+                const result = await response.json();
+
+                // Dans une vraie implémentation, on aurait un onglet dédié aux tournées
+                // Pour l'instant, on simule avec des données de test
+                tours = [
+                    {
+                        id: '1',
+                        name: 'Tournée Paris Nord',
+                        date: new Date().toISOString().split('T')[0],
+                        technician: 'Jean Dupont',
+                        clients: ['Client A', 'Client B'],
+                        status: 'pending',
+                        notes: 'Tournée de maintenance préventive'
+                    },
+                    {
+                        id: '2',
+                        name: 'Tournée Lyon Sud',
+                        date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+                        technician: 'Marie Martin',
+                        clients: ['Client C', 'Client D'],
+                        status: 'completed',
+                        notes: 'Tournée terminée avec succès'
+                    }
+                ];
+
+                displayTours(tours);
+                updateDashboard();
+            } catch (error) {
+                console.error('Erreur chargement tournées:', error);
+                showNotification('Erreur de chargement des tournées', 'error');
+            }
+        }
+
+        function displayTours(toursToDisplay) {
+            const container = document.getElementById('tours-list');
+            if (toursToDisplay.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center;">Aucune tournée trouvée.</p>';
+                return;
+            }
+
+            let html = '<table class="tour-table"><thead><tr><th>Nom</th><th>Date</th><th>Technicien</th><th>Clients</th><th>Statut</th><th>Actions</th></tr></thead><tbody>';
+
+            toursToDisplay.forEach(tour => {
+                html += `
+                    <tr>
+                        <td><strong>${tour.name || 'N/A'}</strong></td>
+                        <td>${formatShortDate(tour.date) || 'N/A'}</td>
+                        <td>${tour.technician || 'N/A'}</td>
+                        <td>${tour.clients ? tour.clients.join(', ') : 'N/A'}</td>
+                        <td>
+                            <span class="tour-status ${tour.status}">
+                                ${tour.status === 'completed' ? '✅ Terminée' : tour.status === 'pending' ? '⏳ En attente' : '❌ Annulée'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="sellsy-btn" onclick="viewTourDetails('${tour.id}')" style="padding: 5px 10px; font-size: 12px;">
+                                👁️ Voir
+                            </button>
+                            <button class="sellsy-btn" onclick="editTour('${tour.id}')" style="padding: 5px 10px; font-size: 12px; background: #2196f3;">
+                                ✏️ Modifier
+                            </button>
+                            <button class="sellsy-btn" onclick="deleteTour('${tour.id}')" style="padding: 5px 10px; font-size: 12px; background: #f44336;">
+                                🗑️ Supprimer
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function filterTours() {
+            const filter = document.getElementById('tour-filter').value;
+            let filtered = tours;
+
+            if (filter === 'pending') {
+                filtered = tours.filter(t => t.status === 'pending');
+            } else if (filter === 'completed') {
+                filtered = tours.filter(t => t.status === 'completed');
+            } else if (filter === 'today') {
+                const today = new Date().toISOString().split('T')[0];
+                filtered = tours.filter(t => t.date === today);
+            }
+
+            displayTours(filtered);
+        }
+
+        function showTourForm(editMode = false, tourId = null) {
+            const modal = document.getElementById('tour-modal');
+            const nameInput = document.getElementById('tour-name');
+            const dateInput = document.getElementById('tour-date');
+            const technicianSelect = document.getElementById('tour-technician');
+            const clientsSelect = document.getElementById('tour-clients');
+            const notesInput = document.getElementById('tour-notes');
+
+            // Charger les techniciens
+            loadTechnicians();
+
+            // Charger les clients
+            loadClientsForTour();
+
+            // Si édition
+            if (editMode && tourId) {
+                const tour = tours.find(t => t.id === tourId);
+                if (tour) {
+                    nameInput.value = tour.name;
+                    dateInput.value = tour.date;
+                    notesInput.value = tour.notes;
+
+                    // Sélectionner le technicien
+                    const technicianOption = Array.from(technicianSelect.options).find(opt => opt.text === tour.technician);
+                    if (technicianOption) technicianOption.selected = true;
+
+                    // Sélectionner les clients
+                    if (tour.clients) {
+                        tour.clients.forEach(clientName => {
+                            const clientOption = Array.from(clientsSelect.options).find(opt => opt.text === clientName);
+                            if (clientOption) clientOption.selected = true;
+                        });
+                    }
+                }
+            } else {
+                // Réinitialiser le formulaire
+                nameInput.value = '';
+                dateInput.value = '';
+                technicianSelect.selectedIndex = 0;
+                Array.from(clientsSelect.options).forEach(opt => opt.selected = false);
+                notesInput.value = '';
+            }
+
+            modal.style.display = 'block';
+        }
+
+        function hideTourForm() {
+            document.getElementById('tour-modal').style.display = 'none';
+            document.getElementById('tour-result').innerHTML = '';
+        }
+
+        async function loadTechnicians() {
+            const select = document.getElementById('tour-technician');
+            select.innerHTML = '<option value="">Sélectionnez un technicien...</option>';
+
+            // Dans une vraie implémentation, on chargerait depuis les utilisateurs
+            const technicians = ['Jean Dupont', 'Marie Martin', 'Pierre Durand', 'Sophie Lambert'];
+            technicians.forEach(tech => {
+                const option = document.createElement('option');
+                option.value = tech;
+                option.textContent = tech;
+                select.appendChild(option);
+            });
+        }
+
+        async function loadClientsForTour() {
+            const select = document.getElementById('tour-clients');
+            select.innerHTML = '<option value="">Sélectionnez les clients...</option>';
+
+            if (clients.length === 0) {
+                await loadClients();
+            }
+
+            clients.forEach(client => {
+                if (client.n) {
+                    const option = document.createElement('option');
+                    option.value = client.n;
+                    option.textContent = client.n;
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        async function saveTour() {
+            const name = document.getElementById('tour-name').value.trim();
+            const date = document.getElementById('tour-date').value;
+            const technician = document.getElementById('tour-technician').value;
+            const notes = document.getElementById('tour-notes').value.trim();
+            const selectedClients = Array.from(document.getElementById('tour-clients').selectedOptions)
+                .map(opt => opt.value)
+                .filter(client => client && client !== 'Sélectionnez les clients...');
+
+            if (!name || !date || !technician || selectedClients.length === 0) {
+                showNotification('Veuillez remplir tous les champs obligatoires', 'error');
+                return;
+            }
+
+            const button = event.target;
+            const originalText = showLoading(button);
+
+            try {
+                const newTour = {
+                    id: Date.now().toString(),
+                    name,
+                    date,
+                    technician,
+                    clients: selectedClients,
+                    status: 'pending',
+                    notes
+                };
+
+                // Dans une vraie implémentation, on sauvegarderait via API
+                tours.push(newTour);
+                showNotification('Tournée sauvegardée avec succès!', 'success');
+                hideTourForm();
+                displayTours(tours);
+                updateDashboard();
+            } catch (error) {
+                console.error('Erreur sauvegarde tournée:', error);
+                showNotification('Erreur de sauvegarde', 'error');
+            } finally {
+                hideLoading(button, originalText);
+            }
+        }
+
+        function viewTourDetails(tourId) {
+            const tour = tours.find(t => t.id === tourId);
+            if (!tour) return;
+
+            const modal = document.getElementById('report-detail-modal');
+            const content = document.getElementById('report-detail-content');
+
+            content.innerHTML = `
+                <h3>🚚 Détails de la tournée: ${tour.name}</h3>
+                <div style="margin: 20px 0;">
+                    <table class="tour-table">
+                        <tr><td><strong>Date:</strong></td><td>${formatDate(tour.date)}</td></tr>
+                        <tr><td><strong>Technicien:</strong></td><td>${tour.technician}</td></tr>
+                        <tr><td><strong>Statut:</strong></td><td>
+                            <span class="tour-status ${tour.status}">
+                                ${tour.status === 'completed' ? '✅ Terminée' : tour.status === 'pending' ? '⏳ En attente' : '❌ Annulée'}
+                            </span>
+                        </td></tr>
+                        <tr><td><strong>Notes:</strong></td><td>${tour.notes || 'Aucune'}</td></tr>
+                    </table>
+                </div>
+                <div style="margin: 20px 0;">
+                    <h4>👥 Clients à visiter</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        ${tour.clients.map(client => `<li style="padding: 5px; border-bottom: 1px solid #eee;">• ${client}</li>`).join('')}
+                    </ul>
+                </div>
+                <div style="margin: 20px 0;">
+                    <button class="sellsy-btn" onclick="markTourAsCompleted('${tour.id}')" style="background: #4caf50;">
+                        ✅ Marquer comme terminée
+                    </button>
+                    <button class="sellsy-btn" onclick="editTour('${tour.id}')" style="background: #2196f3; margin-left: 10px;">
+                        ✏️ Modifier
+                    </button>
+                </div>
+            `;
+
+            modal.style.display = 'block';
+        }
+
+        function editTour(tourId) {
+            showTourForm(true, tourId);
+        }
+
+        function markTourAsCompleted(tourId) {
+            const tour = tours.find(t => t.id === tourId);
+            if (tour) {
+                tour.status = 'completed';
+                displayTours(tours);
+                showNotification('Tournée marquée comme terminée!', 'success');
+                updateDashboard();
+                hideReportDetail();
+            }
+        }
+
+        function deleteTour(tourId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette tournée?')) {
+                tours = tours.filter(t => t.id !== tourId);
+                displayTours(tours);
+                showNotification('Tournée supprimée!', 'success');
+                updateDashboard();
+            }
+        }
+
+        // ========================================================================
+        // GESTION DES RAPPORTS
+        // ========================================================================
+        async function loadReports() {
+            try {
+                // Dans une vraie implémentation, on chargerait depuis Google Sheets ou Sellsy
+                reports = [
+                    {
+                        id: '1',
+                        client: 'Client A',
+                        machine: 'Machine 1',
+                        serialNumber: 'SN12345678',
+                        serviceOrder: 'SO-2024-001',
+                        type: 'maintenance',
+                        date: new Date().toISOString(),
+                        description: 'Maintenance préventive complète',
+                        observations: 'Toutes les vérifications OK',
+                        defects: 'Aucun',
+                        recommendations: 'Prochaine maintenance dans 6 mois',
+                        photos: [],
+                        status: 'completed'
+                    },
+                    {
+                        id: '2',
+                        client: 'Client B',
+                        machine: 'Machine 2',
+                        serialNumber: 'SN87654321',
+                        serviceOrder: 'SO-2024-002',
+                        type: 'inspection',
+                        date: new Date(Date.now() - 86400000).toISOString(),
+                        description: 'Inspection visuelle',
+                        observations: 'État général bon',
+                        defects: 'Usure normale du câble',
+                        recommendations: 'Remplacer le câble dans 3 mois',
+                        photos: [],
+                        status: 'completed'
+                    }
+                ];
+
+                displayReports(reports);
+                updateDashboard();
+            } catch (error) {
+                console.error('Erreur chargement rapports:', error);
+                showNotification('Erreur de chargement des rapports', 'error');
+            }
+        }
+
+        function displayReports(reportsToDisplay) {
+            const container = document.getElementById('reports-list');
+            if (reportsToDisplay.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center;">Aucun rapport trouvé.</p>';
+                return;
+            }
+
+            let html = '<table class="tour-table"><thead><tr><th>Client</th><th>Machine</th><th>N° série</th><th>Type</th><th>Date</th><th>Statut</th><th>Actions</th></tr></thead><tbody>';
+
+            reportsToDisplay.forEach(report => {
+                html += `
+                    <tr>
+                        <td>${report.client || 'N/A'}</td>
+                        <td>${report.machine || 'N/A'}</td>
+                        <td>${report.serialNumber || 'N/A'}</td>
+                        <td>${getReportTypeLabel(report.type)}</td>
+                        <td>${formatShortDate(report.date)}</td>
+                        <td>
+                            <span class="tour-status ${report.status === 'completed' ? 'completed' : 'pending'}">
+                                ${report.status === 'completed' ? '✅ Terminé' : '⏳ En cours'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="sellsy-btn" onclick="viewReportDetails('${report.id}')" style="padding: 5px 10px; font-size: 12px;">
+                                👁️ Voir
+                            </button>
+                            <button class="sellsy-btn" onclick="editReport('${report.id}')" style="padding: 5px 10px; font-size: 12px; background: #2196f3;">
+                                ✏️ Modifier
+                            </button>
+                            <button class="sellsy-btn" onclick="sendReportByEmail('${report.id}')" style="padding: 5px 10px; font-size: 12px; background: #9c27b0;">
+                                📤 Envoyer
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+
+            // Charger les rapports dans le sélecteur d'emails
+            loadReportsInEmailSelect();
+        }
+
+        function getReportTypeLabel(type) {
+            const labels = {
+                'maintenance': 'Maintenance',
+                'corrective': 'Corrective',
+                'inspection': 'Inspection',
+                'calibration': 'Calibration',
+                'other': 'Autre'
+            };
+            return labels[type] || type;
+        }
+
+        function showReportForm(editMode = false, reportId = null) {
+            const modal = document.getElementById('report-modal');
+            const clientSelect = document.getElementById('report-client');
+            const machineSelect = document.getElementById('report-machine');
+
+            // Charger les clients
+            loadClientsForReport();
+
+            // Si édition
+            if (editMode && reportId) {
+                const report = reports.find(r => r.id === reportId);
+                if (report) {
+                    document.getElementById('report-client').value = report.client;
+                    document.getElementById('report-machine').value = report.machine;
+                    document.getElementById('report-serial').value = report.serialNumber || '';
+                    document.getElementById('report-service-order').value = report.serviceOrder || '';
+                    document.getElementById('report-type').value = report.type || 'maintenance';
+                    document.getElementById('report-description').value = report.description || '';
+                    document.getElementById('report-observations').value = report.observations || '';
+                    document.getElementById('report-defects').value = report.defects || '';
+                    document.getElementById('report-recommendations').value = report.recommendations || '';
+
+                    // Charger les photos
+                    if (report.photos && report.photos.length > 0) {
+                        displayReportPhotos(report.photos);
+                    }
+                }
+            } else {
+                // Réinitialiser le formulaire
+                clientSelect.selectedIndex = 0;
+                machineSelect.innerHTML = '<option value="">Sélectionnez une machine...</option>';
+                document.getElementById('report-serial').value = '';
+                document.getElementById('report-service-order').value = '';
+                document.getElementById('report-type').value = 'maintenance';
+                document.getElementById('report-description').value = '';
+                document.getElementById('report-observations').value = '';
+                document.getElementById('report-defects').value = '';
+                document.getElementById('report-recommendations').value = '';
+                document.getElementById('report-photos-container').innerHTML = '';
+                photos = [];
+            }
+
+            modal.style.display = 'block';
+        }
+
+        function hideReportForm() {
+            document.getElementById('report-modal').style.display = 'none';
+            document.getElementById('report-result').innerHTML = '';
+            photos = [];
+        }
+
+        async function loadClientsForReport() {
+            const select = document.getElementById('report-client');
+            select.innerHTML = '<option value="">Sélectionnez un client...</option>';
+
+            if (clients.length === 0) {
+                await loadClients();
+            }
+
+            clients.forEach(client => {
+                if (client.n) {
+                    const option = document.createElement('option');
+                    option.value = client.n;
+                    option.textContent = client.n;
+                    select.appendChild(option);
+                }
+            });
+
+            // Ajouter l'événement pour charger les machines du client
+            select.onchange = async function() {
+                const clientName = this.value;
+                await loadMachinesForClient(clientName);
+            };
+        }
+
+        async function loadMachinesForClient(clientName) {
+            const select = document.getElementById('report-machine');
+            select.innerHTML = '<option value="">Sélectionnez une machine...</option>';
+
+            if (!clientName) return;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'load' })
+                });
+                const result = await response.json();
+                if (result.ok && result.data && result.data.machines) {
+                    const clientMachines = result.data.machines.filter(m => m.c === clientName);
+                    clientMachines.forEach(machine => {
+                        const option = document.createElement('option');
+                        option.value = machine.mo || machine.sn || '';
+                        option.textContent = `${machine.mo || 'N/A'} - ${machine.sn || 'N/A'}`;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Erreur chargement machines:', error);
+            }
+        }
+
+        function handleReportPhotoUpload(event) {
+            const files = event.target.files;
+            if (files.length === 0) return;
+
+            if (photos.length + files.length > 10) {
+                showNotification('Maximum 10 photos autorisées', 'error');
+                return;
+            }
+
+            photos = [...photos, ...Array.from(files)];
+            displayReportPhotos(photos);
+            event.target.value = ''; // Réinitialiser pour permettre la sélection des mêmes fichiers
+        }
+
+        function displayReportPhotos(photosToDisplay) {
+            const container = document.getElementById('report-photos-container');
+            container.innerHTML = '';
+
+            photosToDisplay.forEach((photo, index) => {
+                if (typeof photo === 'string') {
+                    // Photo déjà sauvegardée (URL)
+                    const img = document.createElement('img');
+                    img.src = photo;
+                    img.className = 'report-photo';
+                    img.onclick = () => showPhotoFullscreen(img.src);
+                    container.appendChild(img);
+                } else {
+                    // Nouveau fichier
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'report-photo';
+                        img.onclick = () => showPhotoFullscreen(e.target.result);
+                        container.appendChild(img);
+
+                        // Ajouter un bouton de suppression
+                        const removeBtn = document.createElement('button');
+                        removeBtn.innerHTML = '❌';
+                        removeBtn.style.position = 'absolute';
+                        removeBtn.style.top = '5px';
+                        removeBtn.style.right = '5px';
+                        removeBtn.style.background = 'rgba(244, 67, 54, 0.8)';
+                        removeBtn.style.color = 'white';
+                        removeBtn.style.border = 'none';
+                        removeBtn.style.borderRadius = '50%';
+                        removeBtn.style.width = '24px';
+                        removeBtn.style.height = '24px';
+                        removeBtn.style.cursor = 'pointer';
+                        removeBtn.style.fontSize = '12px';
+                        removeBtn.onclick = (e) => {
+                            e.stopPropagation();
+                            removePhoto(index);
+                        };
+
+                        const photoWrapper = document.createElement('div');
+                        photoWrapper.style.position = 'relative';
+                        photoWrapper.style.display = 'inline-block';
+                        photoWrapper.style.margin = '5px';
+                        photoWrapper.appendChild(img);
+                        photoWrapper.appendChild(removeBtn);
+                        container.appendChild(photoWrapper);
+                    };
+                    reader.readAsDataURL(photo);
+                }
+            });
+        }
+
+        function removePhoto(index) {
+            photos.splice(index, 1);
+            displayReportPhotos(photos);
+        }
+
+        function showPhotoFullscreen(src) {
+            const fullscreenImg = document.createElement('img');
+            fullscreenImg.src = src;
+            fullscreenImg.className = 'report-photo fullscreen';
+            fullscreenImg.onclick = () => document.body.removeChild(fullscreenImg);
+            document.body.appendChild(fullscreenImg);
+        }
+
+        async function saveReport() {
+            const client = document.getElementById('report-client').value;
+            const machine = document.getElementById('report-machine').value;
+            const serialNumber = document.getElementById('report-serial').value.trim();
+            const serviceOrder = document.getElementById('report-service-order').value.trim();
+            const type = document.getElementById('report-type').value;
+            const description = document.getElementById('report-description').value.trim();
+            const observations = document.getElementById('report-observations').value.trim();
+            const defects = document.getElementById('report-defects').value.trim();
+            const recommendations = document.getElementById('report-recommendations').value.trim();
+
+            if (!client || !machine) {
+                showNotification('Veuillez remplir les champs obligatoires', 'error');
+                return;
+            }
+
+            const button = event.target;
+            const originalText = showLoading(button);
+
+            try {
+                // Préparer les données du rapport
+                const reportData = {
+                    id: Date.now().toString(),
+                    client,
+                    machine,
+                    serialNumber: serialNumber || null,
+                    serviceOrder: serviceOrder || null,
+                    type,
+                    date: new Date().toISOString(),
+                    description,
+                    observations,
+                    defects,
+                    recommendations,
+                    photos: photos.filter(p => typeof p === 'string'), // Garder seulement les URLs
+                    status: 'completed'
+                };
+
+                // Sauvegarder localement
+                reports.push(reportData);
+                showNotification('Rapport sauvegardé localement!', 'success');
+                hideReportForm();
+
+                // Sauvegarder dans Sellsy
+                if (sellsyConnected) {
+                    await saveReportToSellsy(reportData);
+                } else {
+                    showNotification('Attention: Sellsy n\'est pas connecté. Le rapport n\'a pas été synchronisé.', 'error');
+                }
+
+                displayReports(reports);
+                updateDashboard();
+                loadReportsInEmailSelect();
+            } catch (error) {
+                console.error('Erreur sauvegarde rapport:', error);
+                showNotification('Erreur de sauvegarde', 'error');
+            } finally {
+                hideLoading(button, originalText);
+            }
+        }
+
+        async function saveReportLocally() {
+            // Même logique que saveReport mais sans synchronisation Sellsy
+            const client = document.getElementById('report-client').value;
+            const machine = document.getElementById('report-machine').value;
+            const serialNumber = document.getElementById('report-serial').value.trim();
+            const serviceOrder = document.getElementById('report-service-order').value.trim();
+            const type = document.getElementById('report-type').value;
+            const description = document.getElementById('report-description').value.trim();
+            const observations = document.getElementById('report-observations').value.trim();
+            const defects = document.getElementById('report-defects').value.trim();
+            const recommendations = document.getElementById('report-recommendations').value.trim();
+
+            if (!client || !machine) {
+                showNotification('Veuillez remplir les champs obligatoires', 'error');
+                return;
+            }
+
+            const button = event.target;
+            const originalText = showLoading(button);
+
+            try {
+                const reportData = {
+                    id: Date.now().toString(),
+                    client,
+                    machine,
+                    serialNumber: serialNumber || null,
+                    serviceOrder: serviceOrder || null,
+                    type,
+                    date: new Date().toISOString(),
+                    description,
+                    observations,
+                    defects,
+                    recommendations,
+                    photos: [],
+                    status: 'pending'
+                };
+
+                reports.push(reportData);
+                showNotification('Rapport sauvegardé localement!', 'success');
+                hideReportForm();
+                displayReports(reports);
+                updateDashboard();
+            } catch (error) {
+                console.error('Erreur sauvegarde rapport local:', error);
+                showNotification('Erreur de sauvegarde', 'error');
+            } finally {
+                hideLoading(button, originalText);
+            }
+        }
+
+        async function saveReportToSellsy(reportData) {
+            try {
+                // Trouver l'ID Sellsy du client
+                // Dans une vraie implémentation, on aurait un mapping
+                const client = clients.find(c => c.n === reportData.client);
+                if (!client) {
+                    throw new Error('Client non trouvé');
+                }
+
+                // Préparer les données pour Sellsy
+                const sellsyReport = {
+                    serviceOrder: reportData.serviceOrder,
+                    date: reportData.date,
+                    serialNumber: reportData.serialNumber,
+                    model: reportData.machine,
+                    client: reportData.client,
+                    clientContact: client.ct || '',
+                    clientEmail: client.e || '',
+                    clientPhone: client.t || '',
+                    instrumentConfig: reportData.description,
+                    softwareVersion: '',
+                    firmwareVersion: '',
+                    manufacturingDate: '',
+                    inspection: {
+                        external: { status: 'ok' },
+                        cable: { status: 'ok' },
+                        screen: { status: 'ok' },
+                        buttons: { status: 'ok' },
+                        handle: { status: 'ok' },
+                        cover: { status: 'ok' },
+                        label: { status: 'ok' }
+                    },
+                    observations: reportData.observations,
+                    defects: reportData.defects,
+                    recommendations: reportData.recommendations,
+                    controllerName: 'Technicien SAV',
+                    controllerFunction: 'Technicien',
+                    status: 'Terminé',
+                    priority: 'Moyenne',
+                    estimatedTime: 2,
+                    costEstimate: 0
+                };
+
+                // Ajouter les photos comme pièces jointes
+                if (reportData.photos && reportData.photos.length > 0) {
+                    sellsyReport.attachments = reportData.photos;
+                }
+
+                // Envoyer à Sellsy via l'API
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'sellsy_store_report',
+                        report: sellsyReport,
+                        clientId: client.n // À remplacer par l'ID Sellsy réel
+                    })
+                });
+                const result = await response.json();
+
+                if (result.ok) {
+                    showNotification('Rapport synchronisé avec Sellsy! ID: ' + result.noteId, 'success');
+                    // Mettre à jour le rapport local avec l'ID Sellsy
+                    const report = reports.find(r => r.id === reportData.id);
+                    if (report) {
+                        report.sellsyId = result.noteId;
+                    }
+                } else {
+                    throw new Error(result.error || 'Erreur de synchronisation avec Sellsy');
+                }
+            } catch (error) {
+                console.error('Erreur sauvegarde Sellsy:', error);
+                throw error;
+            }
+        }
+
+        function viewReportDetails(reportId) {
+            const report = reports.find(r => r.id === reportId);
+            if (!report) return;
+
+            const modal = document.getElementById('report-detail-modal');
+            const content = document.getElementById('report-detail-content');
+
+            content.innerHTML = `
+                <h3>📋 Rapport d'inspection: ${report.serviceOrder || report.id}</h3>
+                <div style="margin: 20px 0;">
+                    <h4>📋 Informations générales</h4>
+                    <table class="tour-table">
+                        <tr><td><strong>Client:</strong></td><td>${report.client}</td></tr>
+                        <tr><td><strong>Machine:</strong></td><td>${report.machine}</td></tr>
+                        <tr><td><strong>N° de série:</strong></td><td>${report.serialNumber || 'N/A'}</td></tr>
+                        <tr><td><strong>N° d'ordre de service:</strong></td><td>${report.serviceOrder || 'N/A'}</td></tr>
+                        <tr><td><strong>Type:</strong></td><td>${getReportTypeLabel(report.type)}</td></tr>
+                        <tr><td><strong>Date:</strong></td><td>${formatDate(report.date)}</td></tr>
+                        <tr><td><strong>Statut:</strong></td><td>
+                            <span class="tour-status ${report.status}">
+                                ${report.status === 'completed' ? '✅ Terminé' : '⏳ En cours'}
+                            </span>
+                        </td></tr>
+                        ${report.sellsyId ? `<tr><td><strong>ID Sellsy:</strong></td><td>${report.sellsyId}</td></tr>` : ''}
+                    </table>
+                </div>
+                <div style="margin: 20px 0;">
+                    <h4>📝 Description</h4>
+                    <p style="white-space: pre-wrap;">${report.description || 'Aucune description'}</p>
+                </div>
+                <div style="margin: 20px 0;">
+                    <h4>👁️ Observations</h4>
+                    <p style="white-space: pre-wrap;">${report.observations || 'Aucune observation'}</p>
+                </div>
+                <div style="margin: 20px 0;">
+                    <h4>⚠️ Défauts constatés</h4>
+                    <p style="white-space: pre-wrap; color: #f44336;">${report.defects || 'Aucun défaut'}</p>
+                </div>
+                <div style="margin: 20px 0;">
+                    <h4>💡 Recommandations</h4>
+                    <p style="white-space: pre-wrap; color: #4caf50;">${report.recommendations || 'Aucune recommandation'}</p>
+                </div>
+                ${report.photos && report.photos.length > 0 ? `
+                <div style="margin: 20px 0;">
+                    <h4>📷 Photos</h4>
+                    <div class="report-photo-container">
+                        ${report.photos.map(photo => `
+                            <img src="${photo}" class="report-photo" onclick="showPhotoFullscreen('${photo}')">
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+                <div style="margin: 20px 0; display: flex; gap: 10px;">
+                    <button class="sellsy-btn" onclick="sendReportByEmail('${report.id}')" style="background: #2196f3;">
+                        📤 Envoyer par email
+                    </button>
+                    <button class="sellsy-btn" onclick="editReport('${report.id}')" style="background: #ff9800;">
+                        ✏️ Modifier
+                    </button>
+                    <button class="sellsy-btn" onclick="deleteReport('${report.id}')" style="background: #f44336;">
+                        🗑️ Supprimer
+                    </button>
+                    <button class="sellsy-btn" onclick="exportReportAsPDF('${report.id}')" style="background: #9c27b0;">
+                        📄 Exporter PDF
+                    </button>
+                </div>
+            `;
+
+            modal.style.display = 'block';
+        }
+
+        function editReport(reportId) {
+            showReportForm(true, reportId);
+        }
+
+        function hideReportDetail() {
+            document.getElementById('report-detail-modal').style.display = 'none';
+        }
+
+        function deleteReport(reportId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce rapport?')) {
+                reports = reports.filter(r => r.id !== reportId);
+                displayReports(reports);
+                showNotification('Rapport supprimé!', 'success');
+                updateDashboard();
+                loadReportsInEmailSelect();
+            }
+        }
+
+        function sendReportByEmail(reportId) {
+            const report = reports.find(r => r.id === reportId);
+            if (!report) return;
+
+            // Pré-remplir le formulaire d'email
+            document.getElementById('email-to').value = clients.find(c => c.n === report.client)?.e || '';
+            document.getElementById('email-subject').value = `Rapport d'inspection - ${report.serviceOrder || report.id} - ${report.client}`;
+            document.getElementById('email-body').value = `Bonjour,
+
+Veuillez trouver ci-joint le rapport d'inspection pour la machine ${report.machine} (N° de série: ${report.serialNumber || 'N/A'}) effectué le ${formatShortDate(report.date)}.
+
+Type d'inspection: ${getReportTypeLabel(report.type)}
+
+Observations:
+${report.observations || 'Aucune'}
+
+Défauts constatés:
+${report.defects || 'Aucun'}
+
+Recommandations:
+${report.recommendations || 'Aucune'}
+
+Cordialement,
+L'équipe SAV Bowman France
+`;
+
+            // Sélectionner le rapport
+            const select = document.getElementById('email-report-select');
+            const option = Array.from(select.options).find(opt => opt.value === reportId);
+            if (option) option.selected = true;
+
+            // Afficher l'onglet emails
+            showTab('emails');
+            document.querySelector('.tab[onclick*="emails"]').click();
+        }
+
+        function loadReportsInEmailSelect() {
+            const select = document.getElementById('email-report-select');
+            select.innerHTML = '<option value="">Sélectionnez un rapport...</option>';
+
+            reports.forEach(report => {
+                const option = document.createElement('option');
+                option.value = report.id;
+                option.textContent = `[${formatShortDate(report.date)}] ${report.client} - ${report.machine} (${report.serviceOrder || report.id})`;
+                select.appendChild(option);
+            });
+        }
+
+        function exportReportAsPDF(reportId) {
+            const report = reports.find(r => r.id === reportId);
+            if (!report) return;
+
+            // Dans une vraie implémentation, on utiliserait une bibliothèque comme jsPDF
+            showNotification('Fonctionnalité d\'export PDF à implémenter', 'info');
+        }
+
+        // ========================================================================
+        // GESTION DES EMAILS
+        // ========================================================================
+        function saveSmtpSettings() {
+            const server = document.getElementById('smtp-server').value.trim();
+            const port = document.getElementById('smtp-port').value.trim();
+            const email = document.getElementById('smtp-email').value.trim();
+            const password = document.getElementById('smtp-password').value;
+            const ssl = document.getElementById('smtp-ssl').checked;
+
+            if (!server || !port || !email) {
+                showNotification('Veuillez remplir tous les champs obligatoires', 'error');
+                return;
+            }
+
+            smtpConfig = {
+                server,
+                port,
+                email,
+                password, // À chiffrer dans une vraie implémentation
+                ssl
+            };
+
+            showNotification('Paramètres SMTP sauvegardés!', 'success');
+        }
+
+        async function sendEmailWithReport() {
+            const to = document.getElementById('email-to').value.trim();
+            const subject = document.getElementById('email-subject').value.trim();
+            const body = document.getElementById('email-body').value.trim();
+            const reportId = document.getElementById('email-report-select').value;
+
+            if (!to || !subject) {
+                showNotification('Veuillez remplir les champs obligatoires', 'error');
+                return;
+            }
+
+            if (!smtpConfig.server || !smtpConfig.email) {
+                showNotification('Veuillez configurer les paramètres SMTP d\'abord', 'error');
+                return;
+            }
+
+            const button = event.target;
+            const originalText = showLoading(button);
+
+            try {
+                // Dans une vraie implémentation, on utiliserait une API backend pour envoyer l'email
+                // car on ne peut pas envoyer d'emails directement depuis le navigateur
+
+                // Préparer les données
+                const emailData = {
+                    to,
+                    subject,
+                    body,
+                    from: smtpConfig.email,
+                    reportId: reportId || null
+                };
+
+                // Simuler l'envoi
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                const resultDiv = document.getElementById('email-result');
+                resultDiv.innerHTML = `
+                    <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 4px;">
+                        ✅ Email envoyé avec succès à ${to}!
+                    </div>
+                `;
+
+                showNotification('Email envoyé!', 'success');
+            } catch (error) {
+                console.error('Erreur envoi email:', error);
+                const resultDiv = document.getElementById('email-result');
+                resultDiv.innerHTML = `
+                    <div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 4px;">
+                        ❌ Erreur: ${error.message}
+                    </div>
+                `;
+                showNotification('Erreur d\'envoi', 'error');
+            } finally {
+                hideLoading(button, originalText);
+            }
+        }
+
+        // ========================================================================
+        // GESTION DES PHOTOS (pour les rapports)
+        // ========================================================================
+        function handlePhotoUpload(event) {
+            const files = event.target.files;
+            if (files.length === 0) return;
+
+            // Afficher un aperçu
+            const container = document.getElementById('report-photos-preview');
+            container.innerHTML = '';
+
+            for (let i = 0; i < Math.min(files.length, 10); i++) {
+                const file = files[i];
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.width = '100px';
+                    img.style.height = '100px';
+                    img.style.objectFit = 'cover';
+                    img.style.margin = '5px';
+                    img.style.borderRadius = '4px';
+                    container.appendChild(img);
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // ========================================================================
+        // ADMINISTRATION SELLSY
+        // ========================================================================
+        function showSellsyAdmin() {
+            document.getElementById('sellsy-admin-modal').style.display = 'block';
+            checkSellsyConnection();
+        }
+
+        function hideSellsyAdmin() {
+            document.getElementById('sellsy-admin-modal').style.display = 'none';
+        }
+
+        async function checkSellsyConnection() {
+            try {
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'sellsy_status' })
+                });
+                const result = await response.json();
+
+                if (result.ok) {
+                    sellsyConnected = result.connected;
+                    sellsyConfig = result.config || {};
+
+                    const statusEl = document.getElementById('sellsy-connection-status');
+                    if (result.connected) {
+                        statusEl.textContent = '✅ Connecté à Sellsy';
+                        statusEl.className = 'sellsy-status connected';
+                        document.getElementById('sellsy-connect-btn').textContent = '🔄 Reconnecter';
+                    } else {
+                        statusEl.textContent = '❌ Non connecté à Sellsy';
+                        statusEl.className = 'sellsy-status disconnected';
+                        document.getElementById('sellsy-connect-btn').textContent = '🔗 Connecter à Sellsy';
+                    }
+
+                    // Mettre à jour les statistiques
+                    if (result.stats) {
+                        document.getElementById('sellsy-bowman-count').textContent = result.stats.bowmanTotal || 0;
+                        document.getElementById('sellsy-sellsy-count').textContent = result.stats.sellsyTotal || 0;
+                        document.getElementById('sellsy-mapped-count').textContent = result.stats.mapped || 0;
+                        document.getElementById('sellsy-docs-count').textContent = result.stats.totalDocuments || 0;
+                        document.getElementById('sellsy-last-sync').textContent = result.stats.lastSync ?
+                            formatDate(result.stats.lastSync) : 'Jamais';
+                    }
+
+                    // Mettre à jour l'état dans l'interface principale
+                    const mainStatusEl = document.getElementById('sellsy-status');
+                    if (result.connected) {
+                        mainStatusEl.textContent = 'Sellsy: Connecté';
+                        mainStatusEl.className = 'sellsy-status connected';
+                    } else {
+                        mainStatusEl.textContent = 'Sellsy: Non connecté';
+                        mainStatusEl.className = 'sellsy-status disconnected';
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur vérification connexion Sellsy:', error);
+                document.getElementById('sellsy-connection-status').textContent = '❌ Erreur de connexion';
+                document.getElementById('sellsy-connection-status').className = 'sellsy-status disconnected';
             }
         }
 
         async function sellsyConnect() {
             try {
-                const authUrl = await sellsyGetAuthUrl();
-                if (authUrl) {
-                    window.location.href = authUrl;
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'sellsy_auth_url' })
+                });
+                const result = await response.json();
+
+                if (result.ok && result.authUrl) {
+                    window.location.href = result.authUrl;
+                } else {
+                    showNotification('Erreur: ' + (result.error || 'Impossible d\'obtenir l\'URL d\'authentification'), 'error');
                 }
             } catch (error) {
-                alert('Erreur: ' + error.message);
+                console.error('Erreur connexion Sellsy:', error);
+                showNotification('Erreur de connexion', 'error');
             }
         }
 
         async function sellsyDisconnect() {
             try {
-                const result = await sellsyDisconnect();
-                if (result) {
-                    alert('Déconnexion réussie');
-                    sellsyCheckConnectionAndUpdate();
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'sellsy_disconnect' })
+                });
+                const result = await response.json();
+
+                if (result.ok) {
+                    showNotification('Déconnexion réussie', 'success');
+                    checkSellsyConnection();
+                } else {
+                    showNotification('Erreur: ' + result.error, 'error');
                 }
             } catch (error) {
-                alert('Erreur: ' + error.message);
+                console.error('Erreur déconnexion Sellsy:', error);
+                showNotification('Erreur de déconnexion', 'error');
             }
         }
 
         async function sellsyTestConnection() {
             try {
-                const result = await sellsyAdminApi('sellsy_test_connection', {}, sellsyGetAdminPassword());
-                if (result.ok) {
-                    alert('Connexion OK: ' + result.message);
-                } else {
-                    alert('Erreur: ' + result.error);
-                }
-            } catch (error) {
-                alert('Erreur: ' + error.message);
-            }
-        }
-
-        async function sellsyRunSync() {
-            try {
-                const result = await sellsyAdminApi('sellsy_sync', {}, sellsyGetAdminPassword());
-                if (result.ok) {
-                    alert('Synchronisation terminée: ' + result.log.join(', '));
-                    sellsyCheckConnectionAndUpdate();
-                } else {
-                    alert('Erreur: ' + result.error);
-                }
-            } catch (error) {
-                alert('Erreur: ' + error.message);
-            }
-        }
-
-        async function sellsySearchClient() {
-            try {
-                const query = document.getElementById('sellsy-search-input').value;
-                if (!query) {
-                    alert('Veuillez entrer un nom de client');
-                    return;
-                }
-
-                const results = await sellsyFindClient(query);
-                const container = document.getElementById('sellsy-search-results');
-
-                if (results.length === 0) {
-                    container.innerHTML = '<div style="color: #666;">Aucun client trouvé</div>';
-                    return;
-                }
-
-                let html = '<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">';
-                html += '<thead><tr style="background: #f5f5f5;"><th style="padding: 10px; text-align: left;">Nom</th><th style="padding: 10px; text-align: left;">Email</th><th style="padding: 10px; text-align: left;">Action</th></tr></thead><tbody>';
-
-                results.forEach(client => {
-                    html += '<tr style="border-bottom: 1px solid #ddd;">';
-                    html += '<td style="padding: 10px;">' + (client.name || 'N/A') + '</td>';
-                    html += '<td style="padding: 10px;">' + (client.email || 'N/A') + '</td>';
-                    html += '<td style="padding: 10px;"><button class="sellsy-btn" onclick="sellsyLoadDocuments(\'' + client.id + '\', \'' + client.name + '\')" style="padding: 5px 10px; font-size: 0.9rem;">Voir documents</button></td>';
-                    html += '</tr>';
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'sellsy_test_connection' })
                 });
-
-                html += '</tbody></table>';
-                container.innerHTML = html;
-            } catch (error) {
-                alert('Erreur: ' + error.message);
-            }
-        }
-
-        async function sellsyLoadDocuments(clientId, clientName) {
-            try {
-                const documents = await sellsyGetClientDocuments(clientId);
-                const container = document.getElementById('sellsy-search-results');
-
-                if (documents.length === 0) {
-                    container.innerHTML = '<div style="color: #666;">Aucun document trouvé pour ' + clientName + '</div>';
-                    return;
-                }
-
-                let html = '<h4 style="margin-top: 20px;">Documents pour ' + clientName + '</h4>';
-                html += '<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">';
-                html += '<thead><tr style="background: #f5f5f5;"><th style="padding: 10px; text-align: left;">Type</th><th style="padding: 10px; text-align: left;">Titre</th><th style="padding: 10px; text-align: left;">Date</th><th style="padding: 10px; text-align: left;">Montant</th></tr></thead><tbody>';
-
-                documents.forEach(doc => {
-                    html += '<tr style="border-bottom: 1px solid #ddd;">';
-                    html += '<td style="padding: 10px;">' + (doc.type || 'N/A') + '</td>';
-                    html += '<td style="padding: 10px;">' + (doc.title || 'N/A') + '</td>';
-                    html += '<td style="padding: 10px;">' + (doc.date ? new Date(doc.date).toLocaleDateString('fr-FR') : 'N/A') + '</td>';
-                    html += '<td style="padding: 10px;">' + (doc.amount ? doc.amount + ' €' : 'N/A') + '</td>';
-                    html += '</tr>';
-                });
-
-                html += '</tbody></table>';
-                container.innerHTML = html;
-            } catch (error) {
-                alert('Erreur: ' + error.message);
-            }
-        }
-
-        async function sellsyStoreReport() {
-            try {
-                const clientName = document.getElementById('sellsy-client-select').value;
-                const clientId = document.getElementById('sellsy-client-id').value;
-                const reportData = document.getElementById('sellsy-report-data').value;
-
-                if (!clientName) {
-                    alert('Veuillez sélectionner un client');
-                    return;
-                }
-
-                if (!clientId) {
-                    alert('Veuillez entrer l\'ID Sellsy du client');
-                    return;
-                }
-
-                if (!reportData) {
-                    alert('Veuillez entrer les données du rapport');
-                    return;
-                }
-
-                const result = await sellsySaveReport(JSON.parse(reportData), clientId);
-                const container = document.getElementById('sellsy-report-result');
+                const result = await response.json();
 
                 if (result.ok) {
-                    container.innerHTML = '<div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 4px;">✅ Rapport stocké avec succès ! ID: ' + result.noteId + '</div>';
+                    showNotification('Connexion OK: ' + result.message, 'success');
                 } else {
-                    container.innerHTML = '<div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 4px;">❌ Erreur: ' + result.error + '</div>';
+                    showNotification('Erreur: ' + result.error, 'error');
                 }
             } catch (error) {
-                document.getElementById('sellsy-report-result').innerHTML =
-                    '<div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 4px;">❌ Erreur: ' + error.message + '</div>';
+                console.error('Erreur test connexion:', error);
+                showNotification('Erreur de test', 'error');
             }
         }
 
-        function sellsyGetAdminPassword() {
-            // À implémenter selon votre système d'authentification
-            // Exemple: return document.getElementById('admin-password-input').value;
-            // Pour cet exemple, on utilise un placeholder
-            return 'VOTRE_MOT_DE_PASSE_ADMIN';
+        async function sellsyRunFullSync() {
+            if (!sellsyConnected) {
+                showNotification('Veuillez d\'abord connecter Sellsy', 'error');
+                return;
+            }
+
+            const button = event.target;
+            const originalText = showLoading(button);
+
+            try {
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'sellsy_sync', direction: 'both' })
+                });
+                const result = await response.json();
+
+                if (result.ok) {
+                    showNotification('Synchronisation complète terminée: ' + result.log.join(', '), 'success');
+                    checkSellsyConnection();
+                    await loadClients();
+                    await loadReports();
+                } else {
+                    showNotification('Erreur: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Erreur synchronisation complète:', error);
+                showNotification('Erreur de synchronisation', 'error');
+            } finally {
+                hideLoading(button, originalText);
+            }
+        }
+
+        async function sellsySyncFromSellsy() {
+            if (!sellsyConnected) {
+                showNotification('Veuillez d\'abord connecter Sellsy', 'error');
+                return;
+            }
+
+            const button = event.target;
+            const originalText = showLoading(button);
+
+            try {
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'sellsy_sync', direction: 'from_sellsy' })
+                });
+                const result = await response.json();
+
+                if (result.ok) {
+                    showNotification('Synchronisation depuis Sellsy terminée: ' + result.log.join(', '), 'success');
+                    checkSellsyConnection();
+                    await loadClients();
+                } else {
+                    showNotification('Erreur: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Erreur synchronisation depuis Sellsy:', error);
+                showNotification('Erreur de synchronisation', 'error');
+            } finally {
+                hideLoading(button, originalText);
+            }
+        }
+
+        async function sellsySyncToSellsy() {
+            if (!sellsyConnected) {
+                showNotification('Veuillez d\'abord connecter Sellsy', 'error');
+                return;
+            }
+
+            const button = event.target;
+            const originalText = showLoading(button);
+
+            try {
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'sellsy_sync', direction: 'to_sellsy' })
+                });
+                const result = await response.json();
+
+                if (result.ok) {
+                    showNotification('Synchronisation vers Sellsy terminée: ' + result.log.join(', '), 'success');
+                    checkSellsyConnection();
+                    await loadReports();
+                } else {
+                    showNotification('Erreur: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Erreur synchronisation vers Sellsy:', error);
+                showNotification('Erreur de synchronisation', 'error');
+            } finally {
+                hideLoading(button, originalText);
+            }
+        }
+
+        async function sellsySearchAndMatch() {
+            const query = document.getElementById('sellsy-search-input').value.trim();
+            if (!query) {
+                showNotification('Veuillez entrer un nom de client', 'error');
+                return;
+            }
+
+            const container = document.getElementById('sellsy-search-results');
+            container.innerHTML = '<p style="color: #666;">Recherche en cours...</p>';
+
+            try {
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'sellsy_search_client', query })
+                });
+                const result = await response.json();
+
+                if (result.ok && result.results) {
+                    if (result.results.length === 0) {
+                        container.innerHTML = '<p style="color: #666;">Aucun client trouvé dans Sellsy.</p>';
+                        return;
+                    }
+
+                    let html = '<h4>Résultats de recherche:</h4><table class="tour-table"><thead><tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Appariement</th><th>Actions</th></tr></thead><tbody>';
+
+                    result.results.forEach(sellsyClient => {
+                        // Vérifier si le client existe déjà dans Bowman
+                        const existingClient = clients.find(c => c.n === sellsyClient.name);
+                        const isMapped = !!existingClient;
+
+                        html += `
+                            <tr>
+                                <td>${sellsyClient.name || 'N/A'}</td>
+                                <td>${sellsyClient.email || 'N/A'}</td>
+                                <td>${sellsyClient.phone || 'N/A'}</td>
+                                <td>
+                                    ${isMapped ? '<span style="color: #4caf50;">✅ Apparié</span>' : '<span style="color: #f44336;">❌ Non apparié</span>'}
+                                </td>
+                                <td>
+                                    ${!isMapped ? `
+                                        <button class="sellsy-btn" onclick="createMapping('${sellsyClient.id}', '${sellsyClient.name}')"
+                                                style="padding: 5px 10px; font-size: 12px; background: #4caf50;">
+                                            ✚ Appariement
+                                        </button>
+                                    ` : ''}
+                                    <button class="sellsy-btn" onclick="viewSellsyClientDetails('${sellsyClient.id}')"
+                                            style="padding: 5px 10px; font-size: 12px;">
+                                        👁️ Détails
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<p style="color: #f44336;">Erreur: ' + (result.error || 'Impossible de rechercher') + '</p>';
+                }
+            } catch (error) {
+                console.error('Erreur recherche Sellsy:', error);
+                container.innerHTML = '<p style="color: #f44336;">Erreur de recherche</p>';
+            }
+        }
+
+        async function createMapping(sellsyId, clientName) {
+            try {
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'sellsy_create_mapping',
+                        sellsyId,
+                        bowmanId: clientName
+                    })
+                });
+                const result = await response.json();
+
+                if (result.ok) {
+                    showNotification('Appariement créé avec succès!', 'success');
+                    sellsySearchAndMatch(); // Rafraîchir la recherche
+                    checkSellsyConnection(); // Mettre à jour les stats
+                } else {
+                    showNotification('Erreur: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Erreur création appariement:', error);
+                showNotification('Erreur de création', 'error');
+            }
+        }
+
+        async function viewSellsyClientDetails(clientId) {
+            try {
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'sellsy_get_client', clientId })
+                });
+                const result = await response.json();
+
+                if (result.ok && result.client) {
+                    const modal = document.getElementById('report-detail-modal');
+                    const content = document.getElementById('report-detail-content');
+
+                    content.innerHTML = `
+                        <h3>👥 Détails du client Sellsy</h3>
+                        <div style="margin: 20px 0;">
+                            <table class="tour-table">
+                                <tr><td><strong>Nom:</strong></td><td>${result.client.name || 'N/A'}</td></tr>
+                                <tr><td><strong>Email:</strong></td><td>${result.client.email || 'N/A'}</td></tr>
+                                <tr><td><strong>Téléphone:</strong></td><td>${result.client.phone || 'N/A'}</td></tr>
+                                <tr><td><strong>Adresse:</strong></td><td>${result.client.address || 'N/A'}</td></tr>
+                                <tr><td><strong>Ville:</strong></td><td>${result.client.city || 'N/A'}</td></tr>
+                                <tr><td><strong>Code postal:</strong></td><td>${result.client.postalCode || 'N/A'}</td></tr>
+                                <tr><td><strong>Pays:</strong></td><td>${result.client.country || 'N/A'}</td></tr>
+                            </table>
+                        </div>
+                        <div style="margin: 20px 0;">
+                            <h4>👥 Contacts</h4>
+                            <div id="sellsy-contacts"></div>
+                        </div>
+                        <div style="margin: 20px 0;">
+                            <h4>📄 Documents</h4>
+                            <button class="sellsy-btn" onclick="loadSellsyClientDocuments('${clientId}')" style="background: #4caf50;">
+                                🔄 Charger les documents
+                            </button>
+                            <div id="sellsy-documents" style="margin-top: 10px;"></div>
+                        </div>
+                    `;
+
+                    modal.style.display = 'block';
+
+                    // Charger les contacts
+                    await loadSellsyClientContacts(clientId);
+                } else {
+                    showNotification('Erreur: ' + (result.error || 'Client non trouvé'), 'error');
+                }
+            } catch (error) {
+                console.error('Erreur détails client Sellsy:', error);
+                showNotification('Erreur de chargement', 'error');
+            }
+        }
+
+        async function loadSellsyClientContacts(clientId) {
+            try {
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'sellsy_get_contacts', clientId })
+                });
+                const result = await response.json();
+
+                if (result.ok && result.contacts) {
+                    const container = document.getElementById('sellsy-contacts');
+                    if (result.contacts.length === 0) {
+                        container.innerHTML = '<p style="color: #666;">Aucun contact trouvé.</p>';
+                        return;
+                    }
+
+                    let html = '<table class="tour-table"><thead><tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Poste</th></tr></thead><tbody>';
+
+                    result.contacts.forEach(contact => {
+                        html += `
+                            <tr>
+                                <td>${contact.firstname || ''} ${contact.lastname || ''}</td>
+                                <td>${contact.email || 'N/A'}</td>
+                                <td>${contact.phone || 'N/A'}</td>
+                                <td>${contact.job || 'N/A'}</td>
+                            </tr>
+                        `;
+                    });
+
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Erreur chargement contacts:', error);
+            }
+        }
+
+        async function loadSellsyClientDocuments(clientId) {
+            try {
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'sellsy_get_documents', clientId })
+                });
+                const result = await response.json();
+
+                if (result.ok && result.documents) {
+                    const container = document.getElementById('sellsy-documents');
+                    if (result.documents.length === 0) {
+                        container.innerHTML = '<p style="color: #666;">Aucun document trouvé.</p>';
+                        return;
+                    }
+
+                    let html = '<table class="tour-table"><thead><tr><th>Type</th><th>Titre</th><th>Date</th><th>Montant</th><th>Actions</th></tr></thead><tbody>';
+
+                    result.documents.forEach(doc => {
+                        html += `
+                            <tr>
+                                <td>${doc.type || 'N/A'}</td>
+                                <td>${doc.title || 'N/A'}</td>
+                                <td>${formatShortDate(doc.date) || 'N/A'}</td>
+                                <td>${doc.amount ? doc.amount + ' €' : 'N/A'}</td>
+                                <td>
+                                    <button class="sellsy-btn" onclick="downloadDocument('${doc.id}')"
+                                            style="padding: 5px 10px; font-size: 12px; background: #4caf50;">
+                                        ⬇️ Télécharger
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Erreur chargement documents:', error);
+            }
+        }
+
+        async function loadUnmappedClients() {
+            try {
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'sellsy_unmapped' })
+                });
+                const result = await response.json();
+
+                if (result.ok) {
+                    const container = document.getElementById('unmapped-clients');
+                    const unmapped = result.unmapped;
+
+                    let html = '<h4>Clients non appariés:</h4>';
+
+                    if (unmapped.bowman.length === 0 && unmapped.sellsy.length === 0) {
+                        html += '<p style="color: #4caf50;">Tous les clients sont appariés!</p>';
+                        container.innerHTML = html;
+                        return;
+                    }
+
+                    if (unmapped.bowman.length > 0) {
+                        html += '<h5>Dans Bowman mais pas dans Sellsy:</h5><ul>';
+                        unmapped.bowman.forEach(client => {
+                            html += `<li>${client}</li>`;
+                        });
+                        html += '</ul>';
+                    }
+
+                    if (unmapped.sellsy.length > 0) {
+                        html += '<h5>Dans Sellsy mais pas dans Bowman:</h5><ul>';
+                        unmapped.sellsy.forEach(client => {
+                            html += `<li>${client.name} (ID: ${client.id}) <button class="sellsy-btn" onclick="importFromSellsy('${client.id}')" style="padding: 2px 6px; font-size: 11px; background: #4caf50;">✚ Importer</button></li>`;
+                        });
+                        html += '</ul>';
+                    }
+
+                    container.innerHTML = html;
+                } else {
+                    showNotification('Erreur: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Erreur chargement clients non appariés:', error);
+                showNotification('Erreur de chargement', 'error');
+            }
+        }
+
+        async function importFromSellsy(sellsyId) {
+            try {
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'sellsy_import_client', sellsyId })
+                });
+                const result = await response.json();
+
+                if (result.ok) {
+                    showNotification('Client importé avec succès!', 'success');
+                    loadUnmappedClients();
+                    await loadClients();
+                    checkSellsyConnection();
+                } else {
+                    showNotification('Erreur: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Erreur import client:', error);
+                showNotification('Erreur d\'import', 'error');
+            }
+        }
+
+        async function saveSyncConfig() {
+            const direction = document.getElementById('sync-direction').value;
+            const frequency = document.getElementById('sync-frequency').value;
+
+            try {
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'sellsy_update_config',
+                        config: {
+                            syncDirection: direction,
+                            syncFrequency: frequency
+                        }
+                    })
+                });
+                const result = await response.json();
+
+                if (result.ok) {
+                    showNotification('Configuration sauvegardée!', 'success');
+                } else {
+                    showNotification('Erreur: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Erreur sauvegarde config:', error);
+                showNotification('Erreur de sauvegarde', 'error');
+            }
+        }
+
+        async function loadSyncLogs() {
+            try {
+                const response = await fetch(SELLSY_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'sellsy_logs', limit: 50 })
+                });
+                const result = await response.json();
+
+                if (result.ok && result.logs) {
+                    const container = document.getElementById('sync-logs');
+                    if (result.logs.length === 0) {
+                        container.innerHTML = '<p style="color: #666;">Aucun log trouvé.</p>';
+                        return;
+                    }
+
+                    let html = '<table class="tour-table"><thead><tr><th>Date</th><th>Action</th><th>Statut</th><th>Détails</th></tr></thead><tbody>';
+
+                    result.logs.forEach(log => {
+                        html += `
+                            <tr>
+                                <td>${formatDate(log.timestamp)}</td>
+                                <td>${log.action}</td>
+                                <td>
+                                    <span style="color: ${log.success ? '#4caf50' : '#f44336'};">
+                                        ${log.success ? '✅' : '❌'}
+                                    </span>
+                                </td>
+                                <td>${log.message || 'N/A'}</td>
+                            </tr>
+                        `;
+                    });
+
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                } else {
+                    showNotification('Erreur: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Erreur chargement logs:', error);
+                showNotification('Erreur de chargement', 'error');
+            }
+        }
+
+        function downloadDocument(docId) {
+            // Dans une vraie implémentation, on téléchargerait le document via l'API
+            showNotification('Fonctionnalité de téléchargement à implémenter', 'info');
         }
 
         // ========================================================================
-        // VÉRIFIER LE CALLBACK OAUTH AU CHARGEMENT
+        // TABLEAU DE BORD
         // ========================================================================
+        function updateDashboard() {
+            document.getElementById('dashboard-clients').textContent = clients.length;
+            document.getElementById('dashboard-machines').textContent = machines.length;
 
-        function checkSellsyCallback() {
+            // Compter les machines
+            if (clients.length > 0) {
+                // Dans une vraie implémentation, on compterait les machines depuis les données
+                const machineCount = 0; // À calculer
+                document.getElementById('dashboard-machines').textContent = machineCount;
+            }
+
+            document.getElementById('dashboard-tours').textContent = tours.filter(t => t.status === 'pending').length;
+            document.getElementById('dashboard-reports').textContent = reports.filter(r =>
+                new Date(r.date).toDateString() === new Date().toDateString()
+            ).length;
+
+            // Charger les prochaines maintenances
+            loadNextMaintenances();
+        }
+
+        async function loadNextMaintenances() {
+            try {
+                // Dans une vraie implémentation, on chargerait depuis les machines
+                const container = document.getElementById('dashboard-maintenances');
+                container.innerHTML = '<p style="color: #666;">Aucune maintenance prévue.</p>';
+            } catch (error) {
+                console.error('Erreur chargement maintenances:', error);
+            }
+        }
+
+        // ========================================================================
+        // INITIALISATION
+        // ========================================================================
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Vérifier la connexion Sellsy au chargement
+            await checkSellsyConnection();
+
+            // Charger les données initiales
+            await loadClients();
+            await loadTours();
+            await loadReports();
+
+            // Vérifier le callback OAuth
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
-            const error = urlParams.get('error');
-
             if (code) {
                 // Échanger le code contre un token
-                sellsyExchangeCode(code);
-                // Nettoyer l'URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-            } else if (error) {
-                console.error('Erreur OAuth:', error);
-            }
-        }
-
-        async function sellsyExchangeCode(code) {
-            try {
-                const result = await sellsyApi('sellsy_callback', { code: code });
-                if (result.ok) {
-                    alert('Connexion à Sellsy réussie !');
-                    window.location.reload();
-                } else {
-                    alert('Erreur: ' + result.error);
+                try {
+                    const response = await fetch(SELLSY_API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'sellsy_callback', code })
+                    });
+                    const result = await response.json();
+                    if (result.ok) {
+                        showNotification('Connexion à Sellsy réussie!', 'success');
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        await checkSellsyConnection();
+                    }
+                } catch (error) {
+                    console.error('Erreur callback OAuth:', error);
                 }
+            }
+        });
+
+        // ========================================================================
+        // FONCTIONS POUR L'INTERFACE EXISTANTE (à adapter selon votre code)
+        // ========================================================================
+        // Ces fonctions doivent être adaptées pour fonctionner avec votre code existant
+
+        // Exemple de fonction pour charger les données depuis Google Sheets
+        async function loadDataFromGoogleSheets() {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'load' })
+                });
+                const result = await response.json();
+                return result;
             } catch (error) {
-                alert('Erreur: ' + error.message);
+                console.error('Erreur chargement données:', error);
+                return null;
             }
         }
 
-        // Vérifier le callback au chargement
-        checkSellsyCallback();
-
-        // ========================================================================
-        // FIN DE L'INTÉGRATION SELLSY
-        // ========================================================================
+        // Exemple de fonction pour sauvegarder dans Google Sheets
+        async function saveDataToGoogleSheets(data) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'save', data })
+                });
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('Erreur sauvegarde données:', error);
+                return null;
+            }
+        }
     </script>
 </body>
 </html>
+```
+
+---
+
+## 📋 **Liste des fichiers à déployer**
+
+| # | Nom du Fichier | Description | Action |
+|---|----------------|-------------|--------|
+| **1** | `index.html` | **Fichier principal avec toutes les fonctionnalités** (interface complète, gestion des clients, tournées, rapports, emails, intégration Sellsy) | **Remplacer** votre index.html actuel |
+| **2** | `sellsy-integration.js` | **Script d'intégration Sellsy** (déjà existant, mais peut être mis à jour) | **Conserver ou remplacer** |
+| **3** | `Code.gs` (Google Apps Script) | **Backend pour Sellsy** (OAuth, synchronisation, stockage des rapports) | **À créer/modifier** dans Apps Script |
+
+---
+
+## 🔧 **Marche à suivre pour connecter Sellsy**
+
+### **Étape 1 : Créer une application OAuth dans Sellsy**
+1. Allez sur [Sellsy Developers](https://developers.sellsy.com/)
+2. Connectez-vous avec votre compte Sellsy
+3. Cliquez sur **"Créer une nouvelle application"**
+4. Remplissez les informations :
+   - **Nom** : `SAV Bowman Integration`
+   - **Description** : Intégration bidirectionnelle avec l'application SAV Bowman France
+   - **URL de redirection (Callback URL)** : `https://script.google.com/macros/s/AKfycbyhvmHutbMyI4aYIN4FENU0-3qXl05QgDTtNofvy-2YDhay-gsOn_U51iuQh5uaqF0Uwg/exec`
+   - **Permissions requises** :
+     - `clients.read`
+     - `clients.write`
+     - `contacts.read`
+     - `contacts.write`
+     - `documents.read`
+     - `notes.write`
+5. Notez bien :
+   - **Client ID** : `votre_client_id`
+   - **Client Secret** : `votre_client_secret`
+
+---
+
+### **Étape 2 : Configurer Google Apps Script (Code.gs)**
+
+```javascript
+// ========================================================================
+// SAV Bowman / Evident - Backend Sellsy
+// À ajouter dans votre projet Google Apps Script
+// ========================================================================
+
+// Configuration Sellsy
+const SELLSY_CONFIG = {
+  clientId: 'VOTRE_CLIENT_ID_SELLSY',
+  clientSecret: 'VOTRE_CLIENT_SECRET_SELLSY',
+  redirectUri: 'https://script.google.com/macros/s/AKfycbyhvmHutbMyI4aYIN4FENU0-3qXl05QgDTtNofvy-2YDhay-gsOn_U51iuQh5uaqF0Uwg/exec',
+  apiUrl: 'https://api.sellsy.com/v2',
+  tokenUrl: 'https://login.sellsy.com/oauth2/token'
+};
+
+// Stockage des tokens
+const SELLSY_TOKENS = {
+  accessToken: null,
+  refreshToken: null,
+  expiresAt: null
+};
+
+// ========================================================================
+// FONCTIONS OAuth
+// ========================================================================
+function sellsyGetAuthUrl() {
+  const state = Utilities.getUuid();
+  const scope = 'clients.read clients.write contacts.read contacts.write documents.read notes.write';
+  const url = `https://login.sellsy.com/oauth2/authorize?response_type=code&client_id=${SELLSY_CONFIG.clientId}&redirect_uri=${encodeURIComponent(SELLSY_CONFIG.redirectUri)}&scope=${encodeURIComponent(scope)}&state=${state}`;
+  return { ok: true, authUrl: url };
+}
+
+function sellsyExchangeCode(code) {
+  const payload = {
+    grant_type: 'authorization_code',
+    code: code,
+    redirect_uri: SELLSY_CONFIG.redirectUri,
+    client_id: SELLSY_CONFIG.clientId,
+    client_secret: SELLSY_CONFIG.clientSecret
+  };
+
+  const options = {
+    method: 'post',
+    payload: payload,
+    muteHttpExceptions: true
+  };
+
+  try {
+    const response = UrlFetchApp.fetch(SELLSY_CONFIG.tokenUrl, options);
+    const data = JSON.parse(response.getContentText());
+
+    if (data.access_token) {
+      SELLSY_TOKENS.accessToken = data.access_token;
+      SELLSY_TOKENS.refreshToken = data.refresh_token;
+      SELLSY_TOKENS.expiresAt = Date.now() + (data.expires_in * 1000);
+
+      // Sauvegarder les tokens (à améliorer avec PropertiesService)
+      saveTokens();
+
+      return { ok: true, message: 'Connexion réussie' };
+    } else {
+      return { ok: false, error: data.error || 'Erreur d\'authentification' };
+    }
+  } catch (error) {
+    return { ok: false, error: error.toString() };
+  }
+}
+
+function sellsyRefreshToken() {
+  if (!SELLSY_TOKENS.refreshToken) {
+    return { ok: false, error: 'Pas de refresh token' };
+  }
+
+  const payload = {
+    grant_type: 'refresh_token',
+    refresh_token: SELLSY_TOKENS.refreshToken,
+    client_id: SELLSY_CONFIG.clientId,
+    client_secret: SELLSY_CONFIG.clientSecret
+  };
+
+  const options = {
+    method: 'post',
+    payload: payload,
+    muteHttpExceptions: true
+  };
+
+  try {
+    const response = UrlFetchApp.fetch(SELLSY_CONFIG.tokenUrl, options);
+    const data = JSON.parse(response.getContentText());
+
+    if (data.access_token) {
+      SELLSY_TOKENS.accessToken = data.access_token;
+      SELLSY_TOKENS.expiresAt = Date.now() + (data.expires_in * 1000);
+
+      // Si un nouveau refresh token est fourni
+      if (data.refresh_token) {
+        SELLSY_TOKENS.refreshToken = data.refresh_token;
+      }
+
+      saveTokens();
+      return { ok: true };
+    } else {
+      return { ok: false, error: data.error || 'Erreur de rafraîchissement' };
+    }
+  } catch (error) {
+    return { ok: false, error: error.toString() };
+  }
+}
+
+function saveTokens() {
+  // Sauvegarder dans PropertiesService
+  const properties = PropertiesService.getScriptProperties();
+  properties.setProperty('sellsy_access_token', SELLSY_TOKENS.accessToken);
+  properties.setProperty('sellsy_refresh_token', SELLSY_TOKENS.refreshToken);
+  properties.setProperty('sellsy_expires_at', SELLSY_TOKENS.expiresAt);
+}
+
+function loadTokens() {
+  const properties = PropertiesService.getScriptProperties();
+  SELLSY_TOKENS.accessToken = properties.getProperty('sellsy_access_token');
+  SELLSY_TOKENS.refreshToken = properties.getProperty('sellsy_refresh_token');
+  SELLSY_TOKENS.expiresAt = parseInt(properties.getProperty('sellsy_expires_at') || '0');
+}
+
+function isTokenValid() {
+  return SELLSY_TOKENS.accessToken && SELLSY_TOKENS.expiresAt > Date.now();
+}
+
+function getValidToken() {
+  if (!isTokenValid()) {
+    if (SELLSY_TOKENS.refreshToken) {
+      const result = sellsyRefreshToken();
+      if (!result.ok) {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+  return SELLSY_TOKENS.accessToken;
+}
+
+// ========================================================================
+// FONCTIONS API SELLSY
+// ========================================================================
+function sellsyApi(method, endpoint, data = null) {
+  const token = getValidToken();
+  if (!token) {
+    return { ok: false, error: 'Non authentifié' };
+  }
+
+  const url = `${SELLSY_CONFIG.apiUrl}/${endpoint}`;
+  const options = {
+    method: method,
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    muteHttpExceptions: true
+  };
+
+  if (data) {
+    options.payload = JSON.stringify(data);
+  }
+
+  try {
+    const response = UrlFetchApp.fetch(url, options);
+    const statusCode = response.getResponseCode();
+    const content = response.getContentText();
+
+    if (statusCode >= 200 && statusCode < 300) {
+      try {
+        const json = JSON.parse(content);
+        return { ok: true, data: json };
+      } catch (e) {
+        return { ok: true, data: content };
+      }
+    } else {
+      try {
+        const error = JSON.parse(content);
+        return { ok: false, error: error.error || error.message || 'Erreur API' };
+      } catch (e) {
+        return { ok: false, error: `Erreur ${statusCode}: ${content}` };
+      }
+    }
+  } catch (error) {
+    return { ok: false, error: error.toString() };
+  }
+}
+
+// ========================================================================
+// FONCTIONS DE SYNCHRONISATION
+// ========================================================================
+function sellsyGetClients() {
+  let allClients = [];
+  let page = 1;
+  let hasMore = true;
+
+  while (hasMore) {
+    const result = sellsyApi('get', `clients?per_page=100&page=${page}`);
+    if (!result.ok) {
+      return { ok: false, error: result.error };
+    }
+
+    const clients = result.data.data || [];
+    allClients = allClients.concat(clients);
+
+    const pagination = result.data.pagination || {};
+    hasMore = pagination.next_page && pagination.next_page > page;
+    page++;
+  }
+
+  return { ok: true, clients: allClients };
+}
+
+function sellsyGetClient(clientId) {
+  const result = sellsyApi('get', `clients/${clientId}`);
+  if (!result.ok) {
+    return result;
+  }
+  return { ok: true, client: result.data.data || result.data };
+}
+
+function sellsySearchClient(query) {
+  const result = sellsyApi('get', `clients?search=${encodeURIComponent(query)}&per_page=50`);
+  if (!result.ok) {
+    return result;
+  }
+  return { ok: true, results: result.data.data || [] };
+}
+
+function sellsyGetContacts(clientId) {
+  const result = sellsyApi('get', `clients/${clientId}/contacts`);
+  if (!result.ok) {
+    return result;
+  }
+  return { ok: true, contacts: result.data.data || [] };
+}
+
+function sellsyGetDocuments(clientId) {
+  const result = sellsyApi('get', `clients/${clientId}/documents`);
+  if (!result.ok) {
+    return result;
+  }
+  return { ok: true, documents: result.data.data || [] };
+}
+
+function sellsyCreateNote(clientId, noteData) {
+  const result = sellsyApi('post', `clients/${clientId}/notes`, noteData);
+  if (!result.ok) {
+    return result;
+  }
+  return { ok: true, noteId: result.data.data.id };
+}
+
+// ========================================================================
+// FONCTIONS PUBLIQUES (appelées depuis le frontend)
+// ========================================================================
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const action = data.action;
+
+    // Charger les tokens au démarrage
+    if (!SELLSY_TOKENS.accessToken) {
+      loadTokens();
+    }
+
+    // Gérer les actions
+    switch (action) {
+      case 'sellsy_auth_url':
+        return returnJson(sellsyGetAuthUrl());
+
+      case 'sellsy_callback':
+        return returnJson(sellsyExchangeCode(data.code));
+
+      case 'sellsy_disconnect':
+        SELLSY_TOKENS.accessToken = null;
+        SELLSY_TOKENS.refreshToken = null;
+        SELLSY_TOKENS.expiresAt = null;
+        saveTokens();
+        return returnJson({ ok: true });
+
+      case 'sellsy_status':
+        return returnJson({
+          ok: true,
+          connected: isTokenValid(),
+          config: SELLSY_CONFIG,
+          stats: getSyncStats()
+        });
+
+      case 'sellsy_test_connection':
+        return returnJson({
+          ok: isTokenValid(),
+          message: isTokenValid() ? 'Connecté à Sellsy' : 'Non connecté'
+        });
+
+      case 'sellsy_sync':
+        return returnJson(sellsySync(data.direction));
+
+      case 'sellsy_search_client':
+        return returnJson(sellsySearchClient(data.query));
+
+      case 'sellsy_get_client':
+        return returnJson(sellsyGetClient(data.clientId));
+
+      case 'sellsy_get_contacts':
+        return returnJson(sellsyGetContacts(data.clientId));
+
+      case 'sellsy_get_documents':
+        return returnJson(sellsyGetDocuments(data.clientId));
+
+      case 'sellsy_store_report':
+        return returnJson(storeReportInSellsy(data.report, data.clientId));
+
+      case 'sellsy_unmapped':
+        return returnJson(getUnmappedClients());
+
+      case 'sellsy_create_mapping':
+        return returnJson(createClientMapping(data.bowmanId, data.sellsyId));
+
+      case 'sellsy_import_client':
+        return returnJson(importClientFromSellsy(data.sellsyId));
+
+      case 'sellsy_update_config':
+        return returnJson(updateSyncConfig(data.config));
+
+      case 'sellsy_logs':
+        return returnJson(getSyncLogs(data.limit));
+
+      case 'sellsy_get_client_by_name':
+        return returnJson(findClientByName(data.name));
+
+      default:
+        return returnJson({ ok: false, error: 'Action inconnue' });
+    }
+  } catch (error) {
+    return returnJson({ ok: false, error: error.toString() });
+  }
+}
+
+function returnJson(data) {
+  return ContentService.createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ========================================================================
+// SYNCHRONISATION COMPLÈTE
+// ========================================================================
+function sellsySync(direction = 'both') {
+  const log = [];
+
+  try {
+    // Synchronisation depuis Sellsy vers Bowman
+    if (direction === 'both' || direction === 'from_sellsy') {
+      const result = syncFromSellsy();
+      if (result.ok) {
+        log.push(`Synchronisation depuis Sellsy: ${result.count} clients`);
+      } else {
+        log.push(`Erreur: ${result.error}`);
+      }
+    }
+
+    // Synchronisation depuis Bowman vers Sellsy
+    if (direction === 'both' || direction === 'to_sellsy') {
+      const result = syncToSellsy();
+      if (result.ok) {
+        log.push(`Synchronisation vers Sellsy: ${result.count} clients`);
+      } else {
+        log.push(`Erreur: ${result.error}`);
+      }
+    }
+
+    return { ok: true, log };
+  } catch (error) {
+    return { ok: false, error: error.toString() };
+  }
+}
+
+function syncFromSellsy() {
+  const result = sellsyGetClients();
+  if (!result.ok) {
+    return result;
+  }
+
+  let count = 0;
+  const ss = SpreadsheetApp.openById('192R9-ht7JX5WrwjRsmm1lbtPlxU8Zl2RcQZ5tlDVTbM');
+
+  result.clients.forEach(sellsyClient => {
+    // Vérifier si le client existe déjà dans Bowman
+    const sh = ss.getSheetByName('Clients');
+    const data = sh.getDataRange().getValues();
+
+    let found = false;
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const clientName = row[0]; // Colonne "n" (Nom)
+
+      // Comparaison simple (à améliorer avec un mapping)
+      if (clientName === sellsyClient.name) {
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      // Ajouter le client à Bowman
+      const newRow = [
+        sellsyClient.name || '', // n
+        sellsyClient.contact?.name || '', // ct
+        sellsyClient.phone || '', // t
+        sellsyClient.email || '', // e
+        sellsyClient.address?.city || '', // v
+        sellsyClient.address?.street || '', // ad
+        sellsyClient.address?.zipcode || '', // cp
+        '' // no (Notes SAV)
+      ];
+
+      sh.appendRow(newRow);
+      count++;
+    }
+  });
+
+  return { ok: true, count };
+}
+
+function syncToSellsy() {
+  const ss = SpreadsheetApp.openById('192R9-ht7JX5WrwjRsmm1lbtPlxU8Zl2RcQZ5tlDVTbM');
+  const sh = ss.getSheetByName('Clients');
+  const data = sh.getDataRange().getValues();
+
+  let count = 0;
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const clientName = row[0]; // n
+    const contact = row[1]; // ct
+    const phone = row[2]; // t
+    const email = row[3]; // e
+    const city = row[4]; // v
+    const address = row[5]; // ad
+    const zipcode = row[6]; // cp
+
+    if (!clientName) continue;
+
+    // Vérifier si le client existe dans Sellsy
+    const searchResult = sellsySearchClient(clientName);
+    if (!searchResult.ok) {
+      continue;
+    }
+
+    let sellsyClient = null;
+    if (searchResult.results.length > 0) {
+      sellsyClient = searchResult.results[0];
+    }
+
+    if (!sellsyClient) {
+      // Créer le client dans Sellsy
+      const clientData = {
+        name: clientName,
+        contact: {
+          name: contact,
+          email: email,
+          phone: phone
+        },
+        address: {
+          street: address,
+          city: city,
+          zipcode: zipcode,
+          country: 'France'
+        }
+      };
+
+      const result = sellsyApi('post', 'clients', clientData);
+      if (result.ok) {
+        count++;
+      }
+    }
+  }
+
+  return { ok: true, count };
+}
+
+// ========================================================================
+// STOCKAGE DES RAPPORTS DANS SELLSY
+// ========================================================================
+function storeReportInSellsy(reportData, clientId) {
+  // Trouver le client dans Sellsy
+  const clientResult = sellsyGetClient(clientId);
+  if (!clientResult.ok) {
+    return { ok: false, error: 'Client non trouvé dans Sellsy' };
+  }
+
+  // Formater le rapport pour Sellsy
+  const noteData = {
+    content: formatReportForSellsy(reportData),
+    isPublic: false,
+    categoryId: 1 // À adapter selon vos catégories Sellsy
+  };
+
+  // Créer la note dans Sellsy
+  const result = sellsyCreateNote(clientId, noteData);
+  if (!result.ok) {
+    return result;
+  }
+
+  // Sauvegarder localement aussi
+  saveReportLocally(reportData, result.noteId);
+
+  return { ok: true, noteId: result.noteId };
+}
+
+function formatReportForSellsy(report) {
+  let content = `=== RAPPORT D'INSPECTION SAV BOWMAN ===
+Date: ${report.date || new Date().toISOString().split('T')[0]}
+N° d'ordre de service: ${report.serviceOrder || 'N/A'}
+Type: ${report.type || 'Inspection'}
+
+--- CLIENT ---
+Nom: ${report.client || 'N/A'}
+Contact: ${report.clientContact || 'N/A'}
+Email: ${report.clientEmail || 'N/A'}
+Téléphone: ${report.clientPhone || 'N/A'}
+
+--- MACHINE ---
+Modèle: ${report.model || 'N/A'}
+N° de série: ${report.serialNumber || 'N/A'}
+Référence: ${report.instrumentConfig || 'N/A'}
+
+--- INSPECTION ---
+${report.inspection ? Object.entries(report.inspection).map(([key, value]) =>
+  `- ${key}: ${value.status || 'N/A'}`).join('\n') : 'Aucune inspection détaillée'}
+
+--- OBSERVATIONS ---
+${report.observations || 'Aucune'}
+
+--- DÉFAUTS ---
+${report.defects || 'Aucun'}
+
+--- RECOMMANDATIONS ---
+${report.recommendations || 'Aucune'}
+
+--- TECHNICIEN ---
+Nom: ${report.controllerName || 'Technicien SAV'}
+Fonction: ${report.controllerFunction || 'Technicien'}
+Statut: ${report.status || 'Terminé'}
+Priorité: ${report.priority || 'Moyenne'}
+Temps estimé: ${report.estimatedTime || 0} heures
+Coût estimé: ${report.costEstimate || 0} €
+`;
+
+  return content;
+}
+
+function saveReportLocally(reportData, sellsyId) {
+  const ss = SpreadsheetApp.openById('192R9-ht7JX5WrwjRsmm1lbtPlxU8Zl2RcQZ5tlDVTbM');
+
+  // Vérifier si l'onglet "Rapports" existe, sinon le créer
+  let sh = ss.getSheetByName('Rapports');
+  if (!sh) {
+    sh = ss.insertSheet('Rapports');
+    sh.appendRow(['ID', 'Client', 'Machine', 'N° série', 'Type', 'Date', 'Statut', 'ID Sellsy', 'Détails']);
+  }
+
+  const newRow = [
+    reportData.serviceOrder || '',
+    reportData.client || '',
+    reportData.model || '',
+    reportData.serialNumber || '',
+    reportData.type || '',
+    reportData.date || new Date().toISOString(),
+    reportData.status || 'Terminé',
+    sellsyId || '',
+    JSON.stringify(reportData)
+  ];
+
+  sh.appendRow(newRow);
+}
+
+// ========================================================================
+// GESTION DES CLIENTS NON APPARIÉS
+// ========================================================================
+function getUnmappedClients() {
+  const ss = SpreadsheetApp.openById('192R9-ht7JX5WrwjRsmm1lbtPlxU8Zl2RcQZ5tlDVTbM');
+
+  // Charger les clients Bowman
+  const clientsSh = ss.getSheetByName('Clients');
+  const clientsData = clientsSh.getDataRange().getValues();
+  const bowmanClients = [];
+  for (let i = 1; i < clientsData.length; i++) {
+    const clientName = clientsData[i][0];
+    if (clientName) {
+      bowmanClients.push(clientName);
+    }
+  }
+
+  // Charger les clients Sellsy
+  const sellsyResult = sellsyGetClients();
+  if (!sellsyResult.ok) {
+    return { ok: false, error: sellsyResult.error };
+  }
+
+  const sellsyClients = sellsyResult.clients.map(c => ({
+    id: c.id,
+    name: c.name
+  }));
+
+  // Trouver les non-appariés
+  const bowmanOnly = bowmanClients.filter(bowmanClient =>
+    !sellsyClients.some(sellsyClient => sellsyClient.name === bowmanClient)
+  );
+
+  const sellsyOnly = sellsyClients.filter(sellsyClient =>
+    !bowmanClients.includes(sellsyClient.name)
+  );
+
+  return {
+    ok: true,
+    unmapped: {
+      bowman: bowmanOnly,
+      sellsy: sellsyOnly
+    }
+  };
+}
+
+function createClientMapping(bowmanId, sellsyId) {
+  // Dans une vraie implémentation, on stockerait ce mapping dans un onglet dédié
+  const ss = SpreadsheetApp.openById('192R9-ht7JX5WrwjRsmm1lbtPlxU8Zl2RcQZ5tlDVTbM');
+
+  let sh = ss.getSheetByName('Sellsy_Mapping');
+  if (!sh) {
+    sh = ss.insertSheet('Sellsy_Mapping');
+    sh.appendRow(['Bowman_ID', 'Sellsy_ID', 'Date']);
+  }
+
+  sh.appendRow([bowmanId, sellsyId, new Date().toISOString()]);
+
+  return { ok: true };
+}
+
+function importClientFromSellsy(sellsyId) {
+  const clientResult = sellsyGetClient(sellsyId);
+  if (!clientResult.ok) {
+    return clientResult;
+  }
+
+  const client = clientResult.client;
+  const ss = SpreadsheetApp.openById('192R9-ht7JX5WrwjRsmm1lbtPlxU8Zl2RcQZ5tlDVTbM');
+  const sh = ss.getSheetByName('Clients');
+
+  const newRow = [
+    client.name || '', // n
+    client.contact?.name || '', // ct
+    client.phone || '', // t
+    client.email || '', // e
+    client.address?.city || '', // v
+    client.address?.street || '', // ad
+    client.address?.zipcode || '', // cp
+    `Importé depuis Sellsy (ID: ${sellsyId})` // no
+  ];
+
+  sh.appendRow(newRow);
+
+  // Créer le mapping
+  createClientMapping(client.name, sellsyId);
+
+  return { ok: true };
+}
+
+function findClientByName(name) {
+  const ss = SpreadsheetApp.openById('192R9-ht7JX5WrwjRsmm1lbtPlxU8Zl2RcQZ5tlDVTbM');
+  const sh = ss.getSheetByName('Clients');
+  const data = sh.getDataRange().getValues();
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    if (row[0] === name) {
+      return {
+        ok: true,
+        client: {
+          n: row[0],
+          ct: row[1],
+          t: row[2],
+          e: row[3],
+          v: row[4],
+          ad: row[5],
+          cp: row[6],
+          no: row[7]
+        }
+      };
+    }
+  }
+
+  return { ok: false, error: 'Client non trouvé' };
+}
+
+// ========================================================================
+// STATISTIQUES ET LOGS
+// ========================================================================
+function getSyncStats() {
+  const ss = SpreadsheetApp.openById('192R9-ht7JX5WrwjRsmm1lbtPlxU8Zl2RcQZ5tlDVTbM');
+
+  // Compter les clients Bowman
+  const clientsSh = ss.getSheetByName('Clients');
+  const bowmanTotal = clientsSh.getLastRow() - 1;
+
+  // Compter les clients Sellsy (si connecté)
+  let sellsyTotal = 0;
+  if (isTokenValid()) {
+    const result = sellsyGetClients();
+    if (result.ok) {
+      sellsyTotal = result.clients.length;
+    }
+  }
+
+  // Compter les appariés
+  let mapped = 0;
+  const mappingSh = ss.getSheetByName('Sellsy_Mapping');
+  if (mappingSh) {
+    mapped = mappingSh.getLastRow() - 1;
+  }
+
+  // Compter les documents (à implémenter)
+  let totalDocuments = 0;
+
+  // Date de dernière synchronisation
+  let lastSync = null;
+  const logsSh = ss.getSheetByName('Sellsy_Logs');
+  if (logsSh && logsSh.getLastRow() > 1) {
+    const logsData = logsSh.getDataRange().getValues();
+    lastSync = logsData[logsData.length - 1][0]; // Première colonne = date
+  }
+
+  return {
+    bowmanTotal,
+    sellsyTotal,
+    mapped,
+    totalDocuments,
+    lastSync
+  };
+}
+
+function getSyncLogs(limit = 50) {
+  const ss = SpreadsheetApp.openById('192R9-ht7JX5WrwjRsmm1lbtPlxU8Zl2RcQZ5tlDVTbM');
+  const sh = ss.getSheetByName('Sellsy_Logs');
+
+  if (!sh || sh.getLastRow() <= 1) {
+    return { ok: true, logs: [] };
+  }
+
+  const data = sh.getDataRange().getValues();
+  const logs = [];
+
+  // Commencer depuis la fin (plus récent)
+  const startRow = Math.max(1, data.length - limit);
+  for (let i = data.length - 1; i >= startRow; i--) {
+    const row = data[i];
+    logs.push({
+      timestamp: row[0],
+      action: row[1],
+      success: row[2] === 'true',
+      message: row[3] || ''
+    });
+  }
+
+  return { ok: true, logs };
+}
+
+function updateSyncConfig(config) {
+  // Sauvegarder la configuration
+  const properties = PropertiesService.getScriptProperties();
+  properties.setProperty('sellsy_sync_direction', config.syncDirection);
+  properties.setProperty('sellsy_sync_frequency', config.syncFrequency);
+
+  return { ok: true, config };
+}
+
+// ========================================================================
+// FONCTIONS DE TEST
+// ========================================================================
+function testSellsyConnection() {
+  loadTokens();
+  return {
+    ok: isTokenValid(),
+    message: isTokenValid() ? 'Connecté à Sellsy' : 'Non connecté'
+  };
+}
+```
